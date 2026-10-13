@@ -213,7 +213,7 @@ function regimeTag(t){
   t = norm(t||'');
   if(t.includes('isento')||t.includes('imune')||t.includes('isencao')) return ['ISENTO / IMUNE','t-green'];
   if(t.includes('cesta basica')) return ['CESTA BÁSICA','t-blue'];
-  if(t.includes('substituicao')||t.includes('substitui')||t.includes('st')) return ['SUBSTITUIÇÃO TRIBUTÁRIA','t-orange'];
+  if(t.includes('substituicao')||t.includes('substitui')||t.includes('sbstitu')||t.includes('retido')||t.includes('mva')) return ['SUBSTITUIÇÃO TRIBUTÁRIA','t-orange'];
   if(t.includes('antecipado')||t.includes('antecipa')) return ['ANTECIPADO','t-purple'];
   if(t.includes('diferimento')) return ['DIFERIMENTO','t-blue'];
   if(t.includes('suspens')) return ['SUSPENSÃO','t-gray'];
@@ -466,11 +466,11 @@ function renderXmlResult() {
   const totST = lastXmlGroup.filter(g => isST(g.ncm)).reduce((s, g) => s + g.val, 0);
   const totICMS = lastXmlGroup.filter(g => !isST(g.ncm)).reduce((s, g) => s + g.val, 0);
   h += '<div class="totals">' +
-    '<div class="total-box sim"><div class="lbl">ICMS (sem ST)</div><div class="val">' + fmtBRL(totICMS) + '</div></div>' +
-    '<div class="total-box st"><div class="lbl">ICMS ST</div><div class="val">' + fmtBRL(totST) + '</div></div>' +
+    '<div class="total-box sim"><div class="lbl">ICMS (sem ST) — soma dos itens</div><div class="val">' + fmtBRL(totICMS) + '</div></div>' +
+    '<div class="total-box st"><div class="lbl">ICMS ST — soma dos itens</div><div class="val">' + fmtBRL(totST) + '</div></div>' +
     '<div class="total-box"><div class="lbl">ISS SEM Retenção (digite)</div><input id="issSem" inputmode="decimal" value="0,00"></div>' +
     '<div class="total-box"><div class="lbl">ISS COM Retenção (digite)</div><input id="issCom" inputmode="decimal" value="0,00"></div>' +
-    '<div class="total-box grand"><div class="lbl">TOTAL (ICMS + ST + ISS)</div><div class="val" id="tTotalXML">' + fmtBRL(totICMS + totST) + '</div></div>' +
+    '<div class="total-box grand"><div class="lbl">TOTAL (itens + ISS)</div><div class="val" id="tTotalXML">' + fmtBRL(totICMS + totST) + '</div></div>' +
     '</div>';
   h += '<div class="msec">NCMs encontrados × tributação ICMS-CE</div>';
   h += '<div style="overflow-x:auto"><table class="xtable"><tr><th>NCM</th><th>Produto (XML)</th><th>Itens</th><th>Qtd total</th><th>Valor total</th><th>Tributação ICMS-CE</th><th>Sit</th><th></th></tr>';
