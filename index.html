@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alíquota Simples Nacional — cálculo para a NFS-e</title>
+  <meta name="description" content="Calcule a alíquota efetiva do Simples Nacional para o campo Valor aproximado dos tributos da NFS-e. Importe o extrato do PGDAS-D ou informe os dados manualmente.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f2544'/><path d='M10 22L22 10' stroke='%2334d399' stroke-width='2.5' stroke-linecap='round'/><circle cx='11' cy='11' r='3' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='21' cy='21' r='3' fill='none' stroke='%23fff' stroke-width='2'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#topo">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M10 22L22 10"/><circle cx="11" cy="11" r="3"/><circle cx="21" cy="21" r="3"/></svg>
+        </span>
+        <span class="brand-text">Alíquota<strong>Simples</strong></span>
+      </a>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="#calcular">Calculadora</a>
+        <a href="#metodologia">Metodologia</a>
+        <a href="#legislacao">Legislação</a>
+      </nav>
+      <span class="badge-ano">Tabelas 2026 · 2027–2028</span>
+    </div>
+  </header>
+
+  <main id="topo">
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <p class="eyebrow">LC 123/2003 · LC 214/2025 · Resolução CGSN 190/2026</p>
+        <h1>A alíquota certa para o campo <span>“Valor aproximado dos tributos”</span> da NFS-e</h1>
+        <p class="hero-sub">Importe o extrato do PGDAS-D e o cálculo é feito na hora, por atividade e por anexo. Sem instalar nada, sem enviar o arquivo para servidor.</p>
+        <div class="hero-stats">
+          <div><strong>5</strong><span>anexos do Simples</span></div>
+          <div><strong>2026</strong><span>e transição 2027–2028</span></div>
+          <div><strong>100%</strong><span>processado no navegador</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap layout" id="calcular">
+      <div class="panel entrada">
+        <div class="tabs" role="tablist" aria-label="Forma de entrada dos dados">
+          <button class="tab is-active" id="tab-pdf" role="tab" aria-selected="true" aria-controls="painel-pdf" data-tab="pdf">Importar PGDAS-D</button>
+          <button class="tab" id="tab-manual" role="tab" aria-selected="false" aria-controls="painel-manual" data-tab="manual">Cálculo manual</button>
+        </div>
+
+        <div id="painel-pdf" role="tabpanel" aria-labelledby="tab-pdf">
+          <label class="dropzone" id="dropzone" for="arquivo" tabindex="0">
+            <input type="file" id="arquivo" accept="application/pdf,.pdf" hidden>
+            <span class="drop-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+            </span>
+            <span class="drop-title">Arraste o extrato do PGDAS-D aqui</span>
+            <span class="drop-sub">ou <u>selecione o arquivo</u> — PDF digital, até 4 MB</span>
+          </label>
+          <p class="nota">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+            O arquivo é lido apenas no seu navegador. Nada é enviado nem armazenado.
+          </p>
+
+          <details class="ajuda">
+            <summary>Onde encontro o extrato do PGDAS-D?</summary>
+            <ol>
+              <li>Acesse o <strong>Portal do Simples Nacional</strong> com o certificado ou código de acesso.</li>
+              <li>Entre em <strong>PGDAS-D → Apuração → Consultar Extrato</strong> e escolha o período.</li>
+              <li>Baixe o PDF (é o arquivo que começa com <em>“Extrato do Simples Nacional”</em>).</li>
+            </ol>
+            <p>O PDF precisa ser digital (texto selecionável). Extratos escaneados ou fotografados não são lidos.</p>
+          </details>
+        </div>
+
+        <div id="painel-manual" role="tabpanel" aria-labelledby="tab-manual" hidden>
+          <form id="form-manual" class="manual" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="ano">Ano de apuração</label>
+                <select id="ano" name="ano">
+                  <option value="2026">2026 (ou anterior)</option>
+                  <option value="2027">2027–2028</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="atividade">Atividade</label>
+                <select id="atividade" name="atividade">
+                  <option value="I">Comércio — Anexo I</option>
+                  <option value="II">Indústria — Anexo II</option>
+                  <option value="III">Serviços — Anexo III</option>
+                  <option value="IV">Serviços — Anexo IV</option>
+                  <option value="V">Serviços — Anexo V</option>
+                  <option value="R">Sujeitos ao Fator R (III ou V)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="rbt12">RBT12 — receita bruta dos 12 meses anteriores <span class="obrig">obrigatório</span></label>
+              <div class="money"><span>R$</span><input id="rbt12" name="rbt12" inputmode="decimal" placeholder="540.220,74" autocomplete="off" required></div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="rbt12p">RBT12p <span class="hint">início de atividade</span></label>
+                <div class="money"><span>R$</span><input id="rbt12p" name="rbt12p" inputmode="decimal" placeholder="opcional" autocomplete="off"></div>
+              </div>
+              <div class="field">
+                <label for="rpa">Receita do mês <span class="hint">opcional</span></label>
+                <div class="money"><span>R$</span><input id="rpa" name="rpa" inputmode="decimal" placeholder="estimar o DAS" autocomplete="off"></div>
+              </div>
+            </div>
+
+            <div class="field" id="campo-fator" hidden>
+              <label for="fator">Fator R <span class="hint">FS12 ÷ RBT12, em %</span></label>
+              <div class="suffix"><input id="fator" name="fator" inputmode="decimal" placeholder="ex.: 61 ou 0,61" autocomplete="off"><span>%</span></div>
+              <p class="field-help" id="fator-help">Fator R ≥ 28% → Anexo III · abaixo de 28% → Anexo V.</p>
+            </div>
+
+            <label class="check" id="campo-hibrido" hidden>
+              <input type="checkbox" id="hibrido" name="hibrido">
+              <span><strong>Simples híbrido (2027+)</strong> — IBS e CBS recolhidos fora do DAS</span>
+            </label>
+
+            <button class="btn btn-primary" type="submit">Calcular alíquota</button>
+            <p class="form-erro" id="form-erro" role="alert" hidden></p>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel resultado" id="resultado" aria-live="polite">
+        <div class="vazio" id="estado-vazio">
+          <span class="vazio-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+          </span>
+          <h2>Seu resultado aparece aqui</h2>
+          <p>Importe o extrato do PGDAS-D ou preencha o cálculo manual para ver a alíquota efetiva de cada atividade.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap metodologia" id="metodologia">
+      <div class="section-head">
+        <p class="eyebrow">Como o cálculo funciona</p>
+        <h2>A mesma conta que o PGDAS-D faz</h2>
+        <p>A alíquota efetiva não é a alíquota da tabela. Ela resulta da receita acumulada, da alíquota nominal e da parcela a deduzir da faixa.</p>
+      </div>
+      <div class="cards3">
+        <article class="card">
+          <span class="card-num">01</span>
+          <h3>Fórmula oficial</h3>
+          <p class="formula-inline">(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12</p>
+          <p>A RBT12 define a faixa. A alíquota efetiva é o percentual que vai para a NFS-e.</p>
+        </article>
+        <article class="card">
+          <span class="card-num">02</span>
+          <h3>Por atividade</h3>
+          <p>Cada atividade tem seu anexo. Comércio usa o Anexo I; indústria, o II; serviços, III, IV ou V conforme o caso.</p>
+          <p>O extrato traz a alíquota de cada atividade separadamente — e é ela que interessa.</p>
+        </article>
+        <article class="card">
+          <span class="card-num">03</span>
+          <h3>Fator R</h3>
+          <p>Serviços do art. 25, V, migram para o Anexo III quando a folha dos 12 meses representa 28% ou mais da RBT12.</p>
+          <p>Abaixo disso, permanecem no Anexo V.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap transicao">
+      <div class="transicao-box">
+        <div>
+          <p class="eyebrow">Reforma tributária</p>
+          <h2>O que muda em 2027</h2>
+          <p>A partir de 2027, IBS e CBS entram no DAS do Simples. As alíquotas nominais das faixas 1 a 5 seguem iguais; a 6ª faixa tem pequenos ajustes. Quem optar pelo <strong>Simples híbrido</strong> recolhe IBS e CBS fora do DAS — e a parcela correspondente sai da alíquota do DAS.</p>
+        </div>
+        <ul class="transicao-lista">
+          <li><strong>2026</strong><span>Tabelas atuais da LC 123/2003.</span></li>
+          <li><strong>2027–2028</strong><span>Resolução CGSN 190/2026, com CBS e IBS na partilha.</span></li>
+          <li><strong>2029+</strong><span>Novas tabelas de transição (ainda não incluídas).</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="wrap legislacao" id="legislacao">
+      <div class="section-head">
+        <p class="eyebrow">Base legal</p>
+        <h2>Normas usadas no cálculo</h2>
+      </div>
+      <div class="legislacao-grid">
+        <a class="leg-item" href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm" target="_blank" rel="noopener">
+          <span>LC nº 123/2003</span>
+          <strong>Estatuto da Micro e Pequena Empresa</strong>
+          <p>Art. 18 e anexos I a V: faixas, alíquotas nominais, parcelas a deduzir e partilha.</p>
+        </a>
+        <a class="leg-item" href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214.htm" target="_blank" rel="noopener">
+          <span>LC nº 214/2025</span>
+          <strong>Reforma tributária — IBS, CBS e IS</strong>
+          <p>Transição do Simples Nacional, art. 22-A e opção pelo recolhimento fora do DAS.</p>
+        </a>
+        <a class="leg-item" href="https://www.in.gov.br/" target="_blank" rel="noopener">
+          <span>Resolução CGSN nº 190/2026</span>
+          <strong>Tabelas de 2027 e 2028</strong>
+          <p>Alíquotas e partilha com CBS e IBS para os anos-calendário 2027 e 2028.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div>
+        <span class="brand-text small">Alíquota<strong>Simples</strong></span>
+        <p>Ferramenta de apoio ao preenchimento da NFS-e. Não substitui a orientação de um contador nem o extrato oficial do PGDAS-D.</p>
+      </div>
+      <p class="footer-meta">Cálculo conforme LC 123/2003 e Resolução CGSN 190/2026.<br>Nenhum dado do contribuinte é transmitido.</p>
+    </div>
+  </footer>
+
+  <script src="pdf.min.js" defer></script>
+  <script src="tabelas.js" defer></script>
+  <script src="parser.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
