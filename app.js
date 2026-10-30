@@ -54,6 +54,43 @@
     return num(valor, casas) + '%';
   }
 
+  function mesesDeAtividade(dataAbertura, anoPA, mesPA) {
+    if (!dataAbertura || !anoPA || !mesPA) return null;
+    var partes = dataAbertura.split('/');
+    if (partes.length !== 3) return null;
+    var anoAbertura = Number(partes[2]);
+    var mesAbertura = Number(partes[1]);
+    var meses = (Number(anoPA) - anoAbertura) * 12 + Number(mesPA) - mesAbertura + 1;
+    return meses > 0 ? meses : null;
+  }
+
+  function baseDoExtrato(d) {
+    var mesAtividade = mesesDeAtividade(d.dataAbertura, d.ano, d.mes);
+    if (!mesAtividade) return { rbt12: d.rbt12, rbt12p: d.rbt12p };
+
+    if (d.ano <= 2026 && mesAtividade <= 12) {
+      var baseInicial2026 = Number(d.rbt12p) || (mesAtividade === 1 ? Number(d.rpa) * 12 : 0);
+      if (!(baseInicial2026 > 0)) {
+        return { erro: 'Para este mês de início de atividade, informe a RBT12p do extrato. No primeiro mês, ela pode ser calculada pela receita do PA multiplicada por 12.' };
+      }
+      return { rbt12: d.rbt12, rbt12p: baseInicial2026, usouRBT12p: true, mesAtividade: mesAtividade };
+    }
+
+    if (d.ano >= 2027 && mesAtividade <= 2) {
+      return { primeiraFaixaForcada: true, rbt12: 0, mesAtividade: mesAtividade };
+    }
+
+    if (d.ano >= 2027 && mesAtividade <= 13) {
+      var baseInicial2027 = Number(d.rbt12) || Number(d.rbt12p) || 0;
+      if (!(baseInicial2027 > 0)) {
+        return { erro: 'Não encontrei a base proporcionalizada do PGDAS-D para este mês de início de atividade.' };
+      }
+      return { rbt12: 0, rbt12p: baseInicial2027, usouRBT12p: true, mesAtividade: mesAtividade };
+    }
+
+    return { rbt12: d.rbt12, rbt12p: 0, mesAtividade: mesAtividade };
+  }
+
   function esc(texto) {
     return String(texto == null ? '' : texto).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -69,6 +106,20 @@
       s = s.replace(/\./g, '');
     }
     return Number(s) || 0;
+  }
+
+  function listaReceitas(texto) {
+    if (!String(texto || '').trim()) return { valores: [] };
+    var partes = String(texto).trim().split(/[;\n]+/);
+    var valores = [];
+    for (var i = 0; i < partes.length; i++) {
+      var parte = partes[i].trim().replace(/[R$\s]/g, '');
+      if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(parte)) {
+        return { erro: 'Revise a lista de receitas. Use valores em reais separados por ponto e vírgula, por exemplo: 10.000,00; 12.500,00; 0,00.' };
+      }
+      valores.push(valorInput(parte));
+    }
+    return { valores: valores };
   }
 
   function chip(rotulo, principal, complemento) {
@@ -137,16 +188,21 @@
       renderErro('Este extrato é de ' + d.ano + '. As tabelas de transição a partir de 2029 ainda não estão incluídas nesta versão.');
       return;
     }
-    if (!d.rbt12 || d.rbt12 <= 0) {
-      renderErro('Não encontrei a RBT12 no extrato. Verifique se o PDF está completo ou use o cálculo manual.');
+    var dadosBase = baseDoExtrato(d);
+    if (dadosBase.erro) { renderErro(dadosBase.erro); return; }
+    if (!dadosBase.primeiraFaixaForcada && (!dadosBase.rbt12 && !dadosBase.rbt12p)) {
+      renderErro('Não encontrei RBT12 ou RBT12p no extrato. Verifique o PDF ou informe os dados manualmente.');
       return;
     }
-    if (d.rbt12 > 4800000) {
-      renderErro('A RBT12 do extrato (' + moeda(d.rbt12) + ') supera R$ 4.800.000,00. A empresa está fora do Simples Nacional.');
+    var baseSelecionada = Number(dadosBase.rbt12p) || Number(dadosBase.rbt12) || 0;
+    if (baseSelecionada > 4800000) {
+      renderErro('A base usada no cálculo (' + moeda(baseSelecionada) + ') supera R$ 4.800.000,00.');
       return;
     }
 
-    var baseNota = d.rbt12p && d.rbt12p > 0 ? 'Base: RBT12p ' + moeda(d.rbt12p) : 'Receita dos 12 meses anteriores';
+    var baseNota = dadosBase.primeiraFaixaForcada
+      ? 'Regra de início de atividade: primeira faixa'
+      : (dadosBase.usouRBT12p ? 'Base proporcionalizada: ' + moeda(baseSelecionada) : 'Base: RBT12 ' + moeda(baseSelecionada));
 
     var html = '';
     html += '<div class="empresa">';
@@ -159,7 +215,7 @@
     html += '</div>';
 
     html += '<div class="chips">';
-    html += chip('RBT12', moeda(d.rbt12), baseNota);
+    html += chip(dadosBase.primeiraFaixaForcada ? 'Enquadramento' : 'Base de cálculo', dadosBase.primeiraFaixaForcada ? '1ª faixa' : moeda(baseSelecionada), baseNota);
     html += chip('Receita do PA', moeda(d.rpa || 0), 'competência ' + esc(d.pa || '—'));
     if (d.fatorR != null) {
       html += chip('Fator R', pct(d.fatorR * 100, 0), 'Anexo ' + esc(d.fatorAnexo || '—') + (d.folha ? ' · folha ' + moeda(d.folha) : ''));
@@ -187,8 +243,10 @@
         resultado = TABELAS.calcular({
           ano: d.ano,
           anexo: anexo,
-          rbt12: d.rbt12,
-          rbt12p: d.rbt12p,
+          rbt12: dadosBase.rbt12,
+          rbt12p: dadosBase.rbt12p,
+          usouRBT12p: dadosBase.usouRBT12p,
+          primeiraFaixaForcada: dadosBase.primeiraFaixaForcada,
           hibrido: estado.hibridoPDF
         });
       }
@@ -247,6 +305,8 @@
       anexo: entrada.anexo,
       rbt12: entrada.rbt12,
       rbt12p: entrada.rbt12p,
+      usouRBT12p: entrada.usouRBT12p,
+      primeiraFaixaForcada: entrada.primeiraFaixaForcada,
       hibrido: entrada.hibrido
     });
 
@@ -264,13 +324,17 @@
     html += '</div>';
 
     html += '<div class="meta-grid">';
-    html += meta(resultado.usouRBT12p ? 'Base (RBT12p)' : 'Base (RBT12)', moeda(resultado.base), resultado.usouRBT12p ? 'início de atividade' : '12 meses anteriores');
+    html += meta(resultado.primeiraFaixaForcada ? 'Base de enquadramento' : (resultado.usouRBT12p ? 'Base proporcionalizada' : 'Base (RBT12)'), resultado.primeiraFaixaForcada ? '1ª faixa' : moeda(resultado.base), resultado.primeiraFaixaForcada ? 'regra dos 1º e 2º meses de atividade em 2027+' : (resultado.usouRBT12p ? 'início de atividade' : '12 meses de referência'));
     html += meta('Faixa', resultado.faixa + 'ª', 'até ' + moeda(TABELAS.FAIXAS[resultado.faixa - 1]));
     html += meta('Alíquota nominal', pct(resultado.nominal), 'tabela do ' + resultado.anexoNome.toLowerCase());
     html += meta('Parcela a deduzir', moeda(resultado.deduzir), 'da faixa ' + resultado.faixa);
     html += '</div>';
 
-    html += '<div class="formula">(' + num(resultado.base) + ' × ' + pct(resultado.nominal) + ' − ' + num(resultado.deduzir) + ') ÷ ' + num(resultado.base) + ' = <b>' + pct(resultado.efetiva, 4) + '</b></div>';
+    if (resultado.primeiraFaixaForcada) {
+      html += '<div class="formula">Regra de início de atividade: aplica-se a alíquota nominal da 1ª faixa — <b>' + pct(resultado.efetiva, 4) + '</b>.</div>';
+    } else {
+      html += '<div class="formula">(' + num(resultado.base) + ' × ' + pct(resultado.nominal) + ' − ' + num(resultado.deduzir) + ') ÷ ' + num(resultado.base) + ' = <b>' + pct(resultado.efetiva, 4) + '</b></div>';
+    }
 
     if (entrada.rpa > 0) {
       var baseDas = resultado.hibrido ? resultado.dentro : resultado.efetiva;
@@ -287,8 +351,8 @@
 
     ORDEM_TRIBUTOS.forEach(function (chave) {
       if (resultado.partilha[chave] == null) return;
-      var fatia = resultado.partilha[chave];
-      var aliquota = resultado.efetiva * fatia / 100;
+      var aliquota = resultado.aliquotasTributos[chave] || 0;
+      var fatia = resultado.efetiva > 0 ? aliquota / resultado.efetiva * 100 : 0;
       var fora = resultado.hibrido && (chave === 'CBS' || chave === 'IBS');
       html += '<tr' + (fora ? ' class="fora"' : '') + '>';
       html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
@@ -372,6 +436,13 @@
     var atividade = $('atividade');
     var campoFator = $('campo-fator');
     var campoHibrido = $('campo-hibrido');
+    var campoInicio = $('campo-mes-atividade');
+    var inicioCheck = $('inicio-atividade');
+    var mesAtividade = $('mes-atividade');
+    var helpInicio = $('inicio-help');
+    var campoHistorico = $('campo-receitas-historicas');
+    var receitasHistoricas = $('receitas-historicas');
+    var helpHistorico = $('historico-help');
     var helpFator = $('fator-help');
 
     function atualizarCampos() {
@@ -389,11 +460,35 @@
       var hibrido = Number($('ano').value) >= 2027;
       campoHibrido.hidden = !hibrido;
       if (!hibrido) $('hibrido').checked = false;
+      campoInicio.hidden = !inicioCheck.checked;
+      var anoApuracao = Number($('ano').value);
+      var mes = Number(mesAtividade.value);
+      var mesesHistorico = anoApuracao <= 2026 ? mes - 1 : mes - 2;
+      var precisaHistorico = inicioCheck.checked && (anoApuracao <= 2026
+        ? mes >= 2 && mes <= 12
+        : mes >= 3 && mes <= 13);
+      campoHistorico.hidden = !precisaHistorico;
+      if (inicioCheck.checked) {
+        if (anoApuracao <= 2026) {
+          helpInicio.textContent = mes === 1
+            ? '1º mês: RBT12p = receita do PA × 12 (preencha a receita do mês ou informe a RBT12p).'
+            : (mes <= 12 ? '2º ao 12º mês: informe a RBT12p do PGDAS-D, calculada pela média dos meses anteriores × 12.' : '13º mês ou posterior: use a RBT12 normal.');
+        } else {
+          helpInicio.textContent = mes <= 2
+            ? '1º e 2º mês: aplica-se a alíquota da 1ª faixa.'
+            : (mes <= 13 ? '3º ao 13º mês: informe a base do PGDAS-D, pela média dos meses antecedentes ao mês anterior × 12.' : '14º mês ou posterior: use a RBT12 normal (12 meses antecedentes ao mês anterior ao PA).');
+        }
+      }
+      if (precisaHistorico) {
+        helpHistorico.textContent = 'Opcional: informe exatamente ' + mesesHistorico + ' valor(es), do 1º ao ' + mesesHistorico + 'º mês de atividade, incluindo 0,00 nos meses sem receita. A média será multiplicada por 12. Se preferir, deixe em branco e informe a RBT12p acima.';
+      }
     }
 
     atividade.addEventListener('change', atualizarCampos);
     $('ano').addEventListener('change', atualizarCampos);
     $('fator').addEventListener('input', atualizarCampos);
+    inicioCheck.addEventListener('change', atualizarCampos);
+    mesAtividade.addEventListener('change', atualizarCampos);
     atualizarCampos();
 
     $('form-manual').addEventListener('submit', function (evento) {
@@ -408,6 +503,16 @@
       var rpa = valorInput($('rpa').value);
       var fator = valorInput($('fator').value);
       if (fator > 0 && fator <= 1) fator = fator * 100;
+      var inicio = inicioCheck.checked;
+      var mesInicio = inicio ? Number(mesAtividade.value) : null;
+      var primeiraFaixaForcada = inicio && ano >= 2027 && mesInicio <= 2;
+      var baseProporcional = rbt12p;
+      var historicoTexto = $('receitas-historicas').value;
+      var erroHistorico = null;
+
+      if (inicio && ano <= 2026 && mesInicio === 1 && !(baseProporcional > 0) && rpa > 0) {
+        baseProporcional = rpa * 12;
+      }
 
       function falhar(mensagem) {
         erroEl.textContent = mensagem;
@@ -415,7 +520,27 @@
         renderErro(mensagem);
       }
 
-      if (rbt12 <= 0) { falhar('Informe a RBT12 — a receita bruta dos 12 meses anteriores.'); return; }
+      var precisaHistorico = inicio && (ano <= 2026
+        ? mesInicio >= 2 && mesInicio <= 12
+        : mesInicio >= 3 && mesInicio <= 13);
+      if (precisaHistorico && historicoTexto.trim()) {
+        var lista = listaReceitas(historicoTexto);
+        var mesesHistorico = ano <= 2026 ? mesInicio - 1 : mesInicio - 2;
+        if (lista.erro) {
+          erroHistorico = lista.erro;
+        } else if (lista.valores.length !== mesesHistorico) {
+          erroHistorico = 'Informe exatamente ' + mesesHistorico + ' valores mensais anteriores ou use a RBT12p do PGDAS-D.';
+        } else {
+          baseProporcional = TABELAS.rbt12pDaMedia(lista.valores);
+        }
+      }
+      if (erroHistorico) { falhar(erroHistorico); return; }
+
+      var precisaRBT12 = !inicio || (ano <= 2026 ? mesInicio >= 13 : mesInicio >= 14);
+      var precisaBaseProporcional = inicio && (ano <= 2026 ? mesInicio <= 12 && !(mesInicio === 1 && baseProporcional > 0) : mesInicio >= 3 && mesInicio <= 13);
+      if (precisaRBT12 && rbt12 <= 0) { falhar('Informe a RBT12 normal do período.'); return; }
+      if (precisaBaseProporcional && baseProporcional <= 0) { falhar('Informe a base proporcionalizada (RBT12p) indicada pelo PGDAS-D para este mês.'); return; }
+      if (!inicio && rbt12 <= 0) { falhar('Informe a RBT12 — a receita bruta de referência para o cálculo.'); return; }
       if (base === 'R' && fator <= 0) { falhar('Informe o Fator R para definir entre Anexo III e Anexo V.'); return; }
 
       var anexo = base === 'R' ? (fator >= 28 ? 'III' : 'V') : base;
@@ -424,8 +549,12 @@
         ano: ano,
         anexo: anexo,
         anexoBase: base,
-        rbt12: rbt12,
-        rbt12p: rbt12p,
+        rbt12: precisaRBT12 ? rbt12 : 0,
+        rbt12p: precisaBaseProporcional || (inicio && ano <= 2026 && mesInicio === 1) ? baseProporcional : 0,
+        usouRBT12p: precisaBaseProporcional || (inicio && ano <= 2026 && mesInicio === 1),
+        primeiraFaixaForcada: primeiraFaixaForcada,
+        inicioAtividade: inicio,
+        mesAtividade: mesInicio,
         rpa: rpa,
         fator: fator,
         hibrido: $('hibrido').checked
@@ -541,6 +670,8 @@
         $('form-erro').hidden = true;
         $('campo-fator').hidden = true;
         $('campo-hibrido').hidden = true;
+        $('campo-mes-atividade').hidden = true;
+        $('campo-receitas-historicas').hidden = true;
         renderVazio('Preencha os dados para calcular.', 'Informe a RBT12 e a atividade. O resultado aparece aqui com a memória de cálculo.');
       }
     });

@@ -1,4 +1,4 @@
-/* Tabelas do Simples Nacional (LC 123/2003 e Resolução CGSN 190/2026).
+/* Tabelas do Simples Nacional (LC 123/2006 e Resolução CGSN 190/2026).
    Vigência até 2026 e 2027-2028. Percentuais de partilha incidem sobre a alíquota efetiva. */
 (function (root, factory) {
   var api = factory();
@@ -115,6 +115,17 @@
     return Number(ano) >= 2027 ? '2027–2028' : 'até 2026';
   }
 
+  function rbt12pDaMedia(receitas) {
+    if (!Array.isArray(receitas) || receitas.length === 0) return null;
+    var soma = 0;
+    for (var i = 0; i < receitas.length; i++) {
+      var receita = Number(receitas[i]);
+      if (!Number.isFinite(receita) || receita < 0) return null;
+      soma += receita;
+    }
+    return soma / receitas.length * 12;
+  }
+
   function calcular(opcoes) {
     var ano = Number(opcoes.ano) || 2026;
     var anexo = opcoes.anexo;
@@ -123,30 +134,62 @@
 
     if (!faixas) return { erro: 'Selecione um anexo válido.' };
 
+    if (ano > 2028) return { erro: 'As tabelas a partir de 2029 ainda não estão incluídas nesta versão.' };
+
     var rbt12 = Number(opcoes.rbt12) || 0;
     var rbt12p = Number(opcoes.rbt12p) || 0;
+    var primeiraFaixaForcada = !!opcoes.primeiraFaixaForcada;
     var base = rbt12p > 0 ? rbt12p : rbt12;
 
-    if (!(base > 0)) return { erro: 'Informe a RBT12 (receita bruta dos 12 meses anteriores).' };
-    if (rbt12 > 4800000 || base > 4800000) {
+    if (!primeiraFaixaForcada && !(base > 0)) {
+      return { erro: 'Informe a RBT12 ou a base proporcionalizada (RBT12p) usada no período.' };
+    }
+    if ((rbt12 > 4800000 || base > 4800000) && !primeiraFaixaForcada) {
       return { erro: 'Receita acima de R$ 4.800.000,00: a empresa está fora do Simples Nacional.' };
     }
 
-    var indice = -1;
-    for (var i = 0; i < faixas.length; i++) {
-      if (base <= faixas[i].ate) { indice = i; break; }
+    var indice = primeiraFaixaForcada ? 0 : -1;
+    if (!primeiraFaixaForcada) {
+      for (var i = 0; i < faixas.length; i++) {
+        if (base <= faixas[i].ate) { indice = i; break; }
+      }
     }
     if (indice < 0) return { erro: 'Receita fora das faixas do Simples Nacional.' };
 
     var faixa = faixas[indice];
-    var efetiva = ((base * faixa.nominal / 100) - faixa.deduzir) / base * 100;
+    var efetiva = primeiraFaixaForcada
+      ? faixa.nominal
+      : ((base * faixa.nominal / 100) - faixa.deduzir) / base * 100;
     if (efetiva < 0) efetiva = 0;
 
-    var partilha = faixa.partilha;
+    // O ISS efetivo não pode exceder 5%. A diferença é redistribuída
+    // proporcionalmente entre os demais tributos da partilha da mesma faixa.
+    var aliquotasTributos = {};
+    Object.keys(faixa.partilha).forEach(function (tributo) {
+      aliquotasTributos[tributo] = efetiva * faixa.partilha[tributo] / 100;
+    });
+    var aliquotaISS = aliquotasTributos.ISS || 0;
+    if (aliquotaISS > 5 && faixa.partilha.ISS != null) {
+      var excesso = efetiva - 5;
+      var somaDemaisPartilhas = Object.keys(faixa.partilha).reduce(function (soma, tributo) {
+        return soma + (tributo === 'ISS' ? 0 : faixa.partilha[tributo]);
+      }, 0);
+      Object.keys(faixa.partilha).forEach(function (tributo) {
+        aliquotasTributos[tributo] = tributo === 'ISS'
+          ? 5
+          : excesso * faixa.partilha[tributo] / somaDemaisPartilhas;
+      });
+    }
+
+    var partilha = {};
+    Object.keys(aliquotasTributos).forEach(function (tributo) {
+      partilha[tributo] = efetiva > 0 ? aliquotasTributos[tributo] / efetiva * 100 : 0;
+    });
+
     var cbs = partilha.CBS || 0;
     var ibs = partilha.IBS || 0;
     var hibrido = !!opcoes.hibrido && ano >= 2027;
-    var fora = hibrido ? efetiva * (cbs + ibs) / 100 : 0;
+    var fora = hibrido ? (aliquotasTributos.CBS || 0) + (aliquotasTributos.IBS || 0) : 0;
 
     return {
       ano: ano,
@@ -154,13 +197,15 @@
       anexo: anexo,
       anexoNome: ANEXOS[anexo].nome,
       anexoTitulo: ANEXOS[anexo].titulo,
-      base: base,
-      usouRBT12p: rbt12p > 0,
+      base: primeiraFaixaForcada ? null : base,
+      usouRBT12p: !!opcoes.usouRBT12p || rbt12p > 0,
+      primeiraFaixaForcada: primeiraFaixaForcada,
       faixa: indice + 1,
       nominal: faixa.nominal,
       deduzir: faixa.deduzir,
       efetiva: efetiva,
       partilha: partilha,
+      aliquotasTributos: aliquotasTributos,
       cbs: cbs,
       ibs: ibs,
       hibrido: hibrido,
@@ -174,6 +219,7 @@
     FAIXAS: FAIXAS,
     ANEXOS: ANEXOS,
     calcular: calcular,
+    rbt12pDaMedia: rbt12pDaMedia,
     tabelasDoAno: tabelasDoAno
   };
 });

@@ -4,8 +4,7 @@ const path = require('path');
 const TAB = require('./tabelas.js');
 const PGDAS = require('./parser.js');
 
-const DIR = process.env.PDFTEXT ||
-  'C:\\Users\\VMF CONTABILIDADE\\AppData\\Local\\Temp\\opencode\\pdftext';
+const DIR = process.env.PDFTEXT || path.join(__dirname, 'test-data');
 
 const casos = [
   { arquivo: 'PGDASD-EXTRATO-07202628032423115.pdf.txt', pa: '09/2026', rbt12: 540220.74, anexo: 'III', taxa: 10.23, cnpj: '08.932.805/0001-85' },
@@ -37,8 +36,13 @@ function perto(a, b, tolerancia) {
   return Math.abs(a - b) <= tolerancia;
 }
 
+const casosDisponiveis = casos.filter(function (caso) {
+  return fs.existsSync(path.join(DIR, caso.arquivo));
+});
+
 console.log('\n== Parser + cálculo nos extratos de exemplo ==');
-casos.forEach(function (caso) {
+if (!casosDisponiveis.length) console.log('Sem PDFs de exemplo locais; testes de parser ignorados.');
+casosDisponiveis.forEach(function (caso) {
   const texto = fs.readFileSync(path.join(DIR, caso.arquivo), 'utf8');
   const dados = PGDAS.parseTexto(texto);
 
@@ -73,6 +77,23 @@ casos.forEach(function (caso) {
     caso.arquivo + ' ' + caso.anexo + ' efetiva = ' + caso.taxa + '% (calculado: ' + resultado.efetiva.toFixed(4) + '%)');
 });
 
+const textoSintetico = [
+  'Extrato do Simples Nacional',
+  'CNPJ Estabelecimento: 12.345.678/0001-99',
+  'Nome Empresarial: Empresa Teste Data de Abertura: 10/01/2026',
+  'Período de Apuração (PA): 02/2026',
+  'Receita Bruta do PA (RPA): R$ 5.000,00',
+  '(RBT12): R$ 0,00',
+  '(RBT12p): R$ 60.000,00',
+  'Valor do Débito por Tributo para a Atividade (R$):',
+  'Revenda de mercadorias',
+  'Receita Bruta Informada: R$ 5.000,00',
+  'Informações por Estabelecimento'
+].join('\n');
+const parseSintetico = PGDAS.parseTexto(textoSintetico);
+ok(!parseSintetico.erro && parseSintetico.dataAbertura === '10/01/2026' && parseSintetico.mes === 2,
+  'parser extrai data de abertura e período para identificar mês de atividade');
+
 console.log('\n== Integridade das tabelas (partilha soma 100%) ==');
 [2026, 2027].forEach(function (ano) {
   const tabelas = TAB.tabelasDoAno(ano);
@@ -89,6 +110,34 @@ const hib = TAB.calcular({ ano: 2027, anexo: 'III', rbt12: 540220.74, hibrido: t
 ok(perto(hib.efetiva, 10.2347, 0.001), 'efetiva cheia 2027 = ' + hib.efetiva.toFixed(4) + '%');
 ok(perto(hib.fora, hib.efetiva * (16.41 + 0.19) / 100, 0.0001), 'parcela CBS+IBS fora do DAS = ' + hib.fora.toFixed(4) + '%');
 ok(perto(hib.dentro, hib.efetiva - hib.fora, 0.0001), 'parcela no DAS = ' + hib.dentro.toFixed(4) + '%');
+
+console.log('\n== Início de atividade ==');
+const primeira2027 = TAB.calcular({ ano: 2027, anexo: 'III', primeiraFaixaForcada: true });
+ok(!primeira2027.erro && primeira2027.faixa === 1 && perto(primeira2027.efetiva, 6, 0.0001),
+  '2027: primeira faixa forçada sem RBT12 nos meses 1 e 2');
+const rbt12p2026 = TAB.calcular({ ano: 2026, anexo: 'I', rbt12: 0, rbt12p: 108000, usouRBT12p: true });
+ok(!rbt12p2026.erro && rbt12p2026.faixa === 1 && rbt12p2026.usouRBT12p,
+  '2026: usa base anualizada/proporcionalizada RBT12p');
+const rbt12p2027 = TAB.calcular({ ano: 2027, anexo: 'III', rbt12: 0, rbt12p: 120000, usouRBT12p: true });
+ok(!rbt12p2027.erro && rbt12p2027.faixa === 1,
+  '2027: usa a base do PGDAS-D entre os meses 3 e 13');
+ok(perto(TAB.rbt12pDaMedia([10000]), 120000, 0.001), 'um mês de receita é anualizado por 12');
+ok(perto(TAB.rbt12pDaMedia([10000, 20000]), 180000, 0.001), 'média de vários meses é anualizada por 12');
+ok(TAB.rbt12pDaMedia([]) === null, 'lista vazia não gera base proporcionalizada');
+
+console.log('\n== Limite de ISS no Anexo III ==');
+const issLimitado = TAB.calcular({ ano: 2027, anexo: 'III', rbt12: 3600000, hibrido: true });
+const issLimitado2026 = TAB.calcular({ ano: 2026, anexo: 'III', rbt12: 3600000 });
+const somaTributos = Object.keys(issLimitado.aliquotasTributos).reduce(function (soma, tributo) {
+  return soma + issLimitado.aliquotasTributos[tributo];
+}, 0);
+ok(perto(issLimitado.aliquotasTributos.ISS, 5, 0.0001), 'ISS efetivo limitado a 5%');
+ok(perto(issLimitado2026.aliquotasTributos.ISS, 5, 0.0001), 'ISS efetivo limitado a 5% também na tabela até 2026');
+ok(perto(somaTributos, issLimitado.efetiva, 0.0001), 'redistribuição mantém a soma igual à alíquota efetiva total');
+ok(perto(Object.keys(issLimitado.partilha).reduce(function (soma, tributo) { return soma + issLimitado.partilha[tributo]; }, 0), 100, 0.001),
+  'partilha após redistribuição soma 100%');
+ok(perto(issLimitado.fora, (issLimitado.aliquotasTributos.CBS || 0) + (issLimitado.aliquotasTributos.IBS || 0), 0.0001),
+  'híbrido deduz CBS e IBS após aplicar o teto de ISS');
 
 console.log('\n== Limites de faixa ==');
 ok(TAB.calcular({ ano: 2026, anexo: 'I', rbt12: 180000 }).faixa === 1, 'R$ 180.000,00 = faixa 1');

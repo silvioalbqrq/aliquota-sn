@@ -90,6 +90,7 @@
       nome = linhaNome[1].replace(/\s*Data de Abertura.*$/i, '').trim();
     }
 
+    var dataAbertura = (texto.match(/Data de Abertura\s*:\s*(\d{2}\/\d{2}\/\d{4})/i) || [])[1] || null;
     var pa = texto.match(/Per[íi]odo de Apura[çc][ãa]o\s*\(PA\):\s*(\d{2})\/(\d{4})/i);
     var mes = pa ? Number(pa[1]) : null;
     var ano = pa ? Number(pa[2]) : null;
@@ -149,6 +150,7 @@
     return {
       cnpj: cnpj,
       nome: nome,
+      dataAbertura: dataAbertura,
       mes: mes,
       ano: ano,
       pa: mes && ano ? (mes < 10 ? '0' + mes : mes) + '/' + ano : null,

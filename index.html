@@ -32,7 +32,7 @@
   <main id="topo">
     <section class="hero">
       <div class="wrap hero-inner">
-        <p class="eyebrow">LC 123/2003 · LC 214/2025 · Resolução CGSN 190/2026</p>
+        <p class="eyebrow">LC 123/2006 · LC 214/2025 · Resolução CGSN 190/2026</p>
         <h1>A alíquota certa para o campo <span>“Valor aproximado dos tributos”</span> da NFS-e</h1>
         <p class="hero-sub">Importe o extrato do PGDAS-D e o cálculo é feito na hora, por atividade e por anexo. Sem instalar nada, sem enviar o arquivo para servidor.</p>
         <div class="hero-stats">
@@ -98,20 +98,51 @@
               </div>
             </div>
 
+            <label class="check inicio-check">
+              <input type="checkbox" id="inicio-atividade" name="inicio-atividade">
+              <span><strong>Empresa em início de atividade</strong> — informe o mês de atividade contado desde a inscrição no CNPJ.</span>
+            </label>
+            <div class="field" id="campo-mes-atividade" hidden>
+              <label for="mes-atividade">Mês de atividade no período de apuração</label>
+              <select id="mes-atividade" name="mes-atividade">
+                <option value="1">1º mês</option>
+                <option value="2">2º mês</option>
+                <option value="3">3º mês</option>
+                <option value="4">4º mês</option>
+                <option value="5">5º mês</option>
+                <option value="6">6º mês</option>
+                <option value="7">7º mês</option>
+                <option value="8">8º mês</option>
+                <option value="9">9º mês</option>
+                <option value="10">10º mês</option>
+                <option value="11">11º mês</option>
+                <option value="12">12º mês</option>
+                <option value="13">13º mês</option>
+                <option value="14">14º mês ou posterior (regra normal)</option>
+              </select>
+              <p class="field-help" id="inicio-help"></p>
+            </div>
+
             <div class="field">
-              <label for="rbt12">RBT12 — receita bruta dos 12 meses anteriores <span class="obrig">obrigatório</span></label>
-              <div class="money"><span>R$</span><input id="rbt12" name="rbt12" inputmode="decimal" placeholder="540.220,74" autocomplete="off" required></div>
+              <label for="rbt12">RBT12 — base normal informada no PGDAS-D <span class="hint">necessária fora do período inicial</span></label>
+              <div class="money"><span>R$</span><input id="rbt12" name="rbt12" inputmode="decimal" placeholder="540.220,74" autocomplete="off"></div>
             </div>
 
             <div class="form-grid">
               <div class="field">
-                <label for="rbt12p">RBT12p <span class="hint">início de atividade</span></label>
+                <label for="rbt12p">Base proporcionalizada (RBT12p) <span class="hint">conforme o PA e o ano</span></label>
                 <div class="money"><span>R$</span><input id="rbt12p" name="rbt12p" inputmode="decimal" placeholder="opcional" autocomplete="off"></div>
               </div>
               <div class="field">
                 <label for="rpa">Receita do mês <span class="hint">opcional</span></label>
                 <div class="money"><span>R$</span><input id="rpa" name="rpa" inputmode="decimal" placeholder="estimar o DAS" autocomplete="off"></div>
               </div>
+            </div>
+
+            <div class="field" id="campo-receitas-historicas" hidden>
+              <label for="receitas-historicas">Receitas brutas mensais anteriores <span class="hint">separadas por ponto e vírgula</span></label>
+              <input id="receitas-historicas" name="receitas-historicas" inputmode="decimal" placeholder="10.000,00; 12.500,00; 0,00" autocomplete="off">
+              <p class="field-help" id="historico-help"></p>
             </div>
 
             <div class="field" id="campo-fator" hidden>
@@ -178,7 +209,7 @@
           <p>A partir de 2027, IBS e CBS entram no DAS do Simples. As alíquotas nominais das faixas 1 a 5 seguem iguais; a 6ª faixa tem pequenos ajustes. Quem optar pelo <strong>Simples híbrido</strong> recolhe IBS e CBS fora do DAS — e a parcela correspondente sai da alíquota do DAS.</p>
         </div>
         <ul class="transicao-lista">
-          <li><strong>2026</strong><span>Tabelas atuais da LC 123/2003.</span></li>
+          <li><strong>2026</strong><span>Tabelas atuais da LC 123/2006.</span></li>
           <li><strong>2027–2028</strong><span>Resolução CGSN 190/2026, com CBS e IBS na partilha.</span></li>
           <li><strong>2029+</strong><span>Novas tabelas de transição (ainda não incluídas).</span></li>
         </ul>
@@ -192,7 +223,7 @@
       </div>
       <div class="legislacao-grid">
         <a class="leg-item" href="https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm" target="_blank" rel="noopener">
-          <span>LC nº 123/2003</span>
+          <span>LC nº 123/2006</span>
           <strong>Estatuto da Micro e Pequena Empresa</strong>
           <p>Art. 18 e anexos I a V: faixas, alíquotas nominais, parcelas a deduzir e partilha.</p>
         </a>
@@ -216,7 +247,7 @@
         <span class="brand-text small">Alíquota<strong>Simples</strong></span>
         <p>Ferramenta de apoio ao preenchimento da NFS-e. Não substitui a orientação de um contador nem o extrato oficial do PGDAS-D.</p>
       </div>
-      <p class="footer-meta">Cálculo conforme LC 123/2003 e Resolução CGSN 190/2026.<br>Nenhum dado do contribuinte é transmitido.</p>
+      <p class="footer-meta">Cálculo conforme LC 123/2006 e Resolução CGSN 190/2026.<br>Nenhum dado do contribuinte é transmitido.</p>
     </div>
   </footer>
 
