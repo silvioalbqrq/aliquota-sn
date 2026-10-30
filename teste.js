@@ -18,7 +18,8 @@ const casos = [
   { arquivo: 'PGDASD-EXTRATO-07202626539921539.pdf.txt', pa: '08/2026', rbt12: 20179.99, base: 34594.27, anexo: 'I', taxa: 4.00 },
   { arquivo: 'PGDASD-EXTRATO-07202500700531059.pdf.txt', pa: '12/2024', rbt12: 92386.81, anexo: 'III', taxa: 6.00, fatorR: 0.61 },
   { arquivo: 'PGDASD-EXTRATO-07202623359956763.pdf.txt', pa: '07/2026', rbt12: 355802.78, anexo: 'III', taxa: 8.57 },
-  { arquivo: 'PGDASD-EXTRATO-07202625308242425.pdf.txt', pa: '08/2026', rbt12: 449860.07, anexo: 'III', taxa: 9.58 }
+  { arquivo: 'PGDASD-EXTRATO-07202625308242425.pdf.txt', pa: '08/2026', rbt12: 449860.07, anexo: 'III', taxa: 9.58 },
+  { arquivo: 'PGDASD-EXTRATO-07202627463085083 DEDETIZADORA.pdf.txt', pa: '09/2026', rbt12: 228201.99, anexo: 'IV', taxa: 5.45, cnpj: '03.602.402/0001-54' }
 ];
 
 let falhas = 0;

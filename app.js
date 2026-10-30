@@ -91,8 +91,10 @@
     else base = String(descricao || '').slice(0, 90);
 
     if (/monof[aá]sica/.test(d)) base += ' · monofásico';
-    if (/substitui[cç][aã]o tribut[aá]ria/.test(d)) base += ' · ICMS ST';
-    if (/reten[cç][aã]o\/substitui[cç][aã]o tribut[aá]ria de iss/.test(d)) base += ' · ISS retido';
+    // Substituição tributária de ICMS (não de ISS)
+    if (/substitui[cç][aã]o tribut[aá]ria(?! de iss)/.test(d)) base += ' · ICMS ST';
+    // Retenção de ISS: só quando diz "com retenção/... de ISS"
+    if (/com reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/.test(d)) base += ' · ISS retido';
     return base;
   }
 
