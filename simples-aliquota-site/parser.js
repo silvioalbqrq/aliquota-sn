@@ -96,7 +96,7 @@
 
     var rpa = valorNaLinha(linhas, function (l) { return /Receita Bruta do PA\s*\(RPA\)/i.test(l); });
     var rbt12 = valorRotulo(linhas, '(RBT12)', true);
-    var rbt12p = valorRotulo(linhas, '(RBT12p)', false);
+    var rbt12p = valorRotulo(linhas, '(RBT12p)', true);
     var folha = valorRotulo(linhas, 'Total de Folhas', false);
 
     var fatorR = null;

@@ -128,7 +128,7 @@
     var base = rbt12p > 0 ? rbt12p : rbt12;
 
     if (!(base > 0)) return { erro: 'Informe a RBT12 (receita bruta dos 12 meses anteriores).' };
-    if (rbt12 > 4800000 || base > 4800000) {
+    if (base > 4800000) {
       return { erro: 'Receita acima de R$ 4.800.000,00: a empresa está fora do Simples Nacional.' };
     }
 

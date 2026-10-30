@@ -141,8 +141,9 @@
       renderErro('Não encontrei a RBT12 no extrato. Verifique se o PDF está completo ou use o cálculo manual.');
       return;
     }
-    if (d.rbt12 > 4800000) {
-      renderErro('A RBT12 do extrato (' + moeda(d.rbt12) + ') supera R$ 4.800.000,00. A empresa está fora do Simples Nacional.');
+    var basePDF = d.rbt12p && d.rbt12p > 0 ? d.rbt12p : d.rbt12;
+    if (basePDF > 4800000) {
+      renderErro('A receita do extrato (' + moeda(basePDF) + ') supera R$ 4.800.000,00. A empresa está fora do Simples Nacional.');
       return;
     }
 
@@ -412,7 +413,7 @@
       function falhar(mensagem) {
         erroEl.textContent = mensagem;
         erroEl.hidden = false;
-        renderErro(mensagem);
+        return;
       }
 
       if (rbt12 <= 0) { falhar('Informe a RBT12 — a receita bruta dos 12 meses anteriores.'); return; }
