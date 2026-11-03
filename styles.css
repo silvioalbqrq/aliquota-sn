@@ -530,8 +530,22 @@ button, input, select { font: inherit; color: inherit; }
 }
 
 @media print {
-  body { background: #fff; }
-  .topbar, .hero, .entrada, .metodologia, .transicao, .legislacao, .footer, .acoes-resultado, .btn-copy { display: none !important; }
+  @page { margin: 10mm; }
+  body { background: #fff; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .topbar, .hero, .entrada, .metodologia, .transicao, .legislacao, .footer,
+  .acoes-resultado, .btn-copy, .toggle-hibrido, .section-mini p { display: none !important; }
   .layout { display: block; margin: 0; padding: 0; }
   .panel.resultado { box-shadow: none; border: 0; padding: 0; }
+  .empresa { padding-bottom: 8px; }
+  .empresa h2 { font-size: 1rem; }
+  .empresa .pa { padding: 5px 9px; border-radius: 7px; }
+  .chips { gap: 6px; margin: 8px 0; }
+  .chip { padding: 6px 9px; border-radius: 7px; }
+  .chip strong { font-size: .82rem; }
+  .section-mini { margin: 10px 0 2px; }
+  .ativ-head { padding: 6px 4px; }
+  .ativ { padding: 6px 4px; }
+  .ativ-rate strong { font-size: 1rem; }
+  .hibrido-info, .alerta { margin-top: 8px; padding: 7px 10px; }
+  .rodape-nota { margin-top: 8px; padding-top: 7px; }
 }
