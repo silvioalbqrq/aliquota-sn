@@ -224,6 +224,20 @@
     }
     html += '</div>';
 
+    var totalReceita = 0;
+    var totalDAS = 0;
+    d.atividades.forEach(function (atividade) {
+      if (atividade.receita != null) totalReceita += Number(atividade.receita);
+      if (atividade.totalDAS != null) totalDAS += Number(atividade.totalDAS);
+    });
+    var aliquotaGeral = totalReceita > 0 ? (totalDAS / totalReceita) * 100 : 0;
+
+    html += '<div class="geral">';
+    html +=   '<span class="geral-label">Alíquota geral — todas as atividades</span>';
+    html +=   '<strong>' + pct(aliquotaGeral, 5) + '</strong>';
+    html +=   '<small>DAS total ' + moeda(totalDAS) + ' ÷ receita total ' + moeda(totalReceita) + '</small>';
+    html += '</div>';
+
     html += '<div class="section-mini">';
     html +=   '<div><h3>Alíquota por atividade</h3><p>Copie o percentual da coluna à direita para o campo da NFS-e.</p></div>';
     if (d.ano >= 2027) {

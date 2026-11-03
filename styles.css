@@ -306,6 +306,14 @@ button, input, select { font: inherit; color: inherit; }
 .chip strong { display: block; font-size: .92rem; margin-top: 2px; letter-spacing: -.01em; }
 .chip small { display: block; font-size: .66rem; color: var(--muted); margin-top: 1px; }
 
+.geral {
+  background: var(--emerald-soft); border: 1px solid #c7ecd9; border-radius: 10px;
+  padding: 10px 14px; margin: 14px 0; font-size: .86rem; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.geral-label { color: #067a54; font-weight: 700; font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; }
+.geral strong { color: #067a54; font-size: 1.35rem; letter-spacing: -.02em; }
+.geral small { color: #2c5f4b; font-size: .72rem; }
+
 .section-mini {
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
   margin: 20px 0 8px;
