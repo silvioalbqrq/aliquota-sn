@@ -528,3 +528,10 @@ button, input, select { font: inherit; color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
 }
+
+@media print {
+  body { background: #fff; }
+  .topbar, .hero, .entrada, .metodologia, .transicao, .legislacao, .footer, .acoes-resultado, .btn-copy { display: none !important; }
+  .layout { display: block; margin: 0; padding: 0; }
+  .panel.resultado { box-shadow: none; border: 0; padding: 0; }
+}

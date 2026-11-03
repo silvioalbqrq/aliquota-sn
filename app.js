@@ -290,6 +290,7 @@
     html += '<p class="rodape-nota"><strong>Como usar:</strong> informe o percentual no campo “Alíquota no Simples Nacional” (Passo 19). A alíquota do anexo é a carga aproximada da atividade, antes de exclusões de ST, monofásico e retenção de ISS — o mesmo critério do extrato.</p>';
 
     html += '<div class="acoes-resultado">';
+    html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
     html +=   '<button class="btn btn-soft" data-acao="importar">Importar outro extrato</button>';
     html +=   '<button class="btn btn-soft" data-acao="limpar">Limpar</button>';
     html += '</div>';
@@ -659,6 +660,8 @@
       var nome = acao.getAttribute('data-acao');
       if (nome === 'importar') {
         $('arquivo').click();
+      } else if (nome === 'imprimir') {
+        window.print();
       } else if (nome === 'limpar') {
         estado.dados = null;
         estado.anexos = {};
