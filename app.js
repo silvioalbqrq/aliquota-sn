@@ -233,7 +233,7 @@
     var aliquotaGeral = totalReceita > 0 ? (totalDAS / totalReceita) * 100 : 0;
 
     html += '<div class="geral">';
-    html +=   '<span class="geral-label">Alíquota geral — todas as atividades</span>';
+    html +=   '<span class="geral-label">Alíquota geral do DAS — todas as atividades</span>';
     html +=   '<strong>' + pct(aliquotaGeral, 5) + '</strong>';
     html +=   '<small>DAS total ' + moeda(totalDAS) + ' ÷ receita total ' + moeda(totalReceita) + '</small>';
     html += '</div>';
@@ -245,7 +245,7 @@
     }
     html += '</div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span></span></div>';
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span>Alíquota DAS</span><span></span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -290,13 +290,14 @@
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
         html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
-        if (atividade.receita != null && atividade.totalDAS != null && Number(atividade.receita) > 0) {
-          var dasAtividade = (Number(atividade.totalDAS) / Number(atividade.receita)) * 100;
-          html += '<div class="ativ-das">DAS ' + pct(dasAtividade, 5) + '</div>';
+        var dasPct = '';
+        if (atividade.receita != null && atividade.totalDAS != null && atividade.receita > 0) {
+          dasPct = pct((atividade.totalDAS / atividade.receita) * 100, 5);
         }
+        html += '<div class="ativ-rate das-rate">' + (dasPct || '—') + '</div>';
         html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
       } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><div class="ativ-rate das-rate">—</div><span></span>';
       }
       html += '</div>';
     });
