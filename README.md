@@ -1,15 +1,18 @@
 # Alíquota Simples
 
-Calculadora estática da alíquota efetiva do Simples Nacional para o campo
-**“Valor aproximado dos tributos”** (Passo 19) da NFS-e.
+Calculadora estática de alíquotas do Simples Nacional para a emissão de NFS-e.
+Mostra, por atividade, três números lado a lado:
 
-O cálculo segue a fórmula oficial:
+- **alíquota efetiva** — `(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12`
+  (art. 18, §1º-A da LC 123/2006), a carga real do período;
+- **alíquota nominal** — a da faixa, que o guia oficial do Emissor Nacional indica
+  para o campo **“Alíquota no Simples Nacional”** (Decreto 8.264/2014, art. 9º);
+- **DAS pago** — o que o extrato efetivamente cobrou, já sem ICMS ST, monofásico e
+  ISS retido.
 
-```
-alíquota efetiva = (RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12
-```
-
-Nos meses iniciais de atividade, a regra de escolha da base/faixa varia conforme o ano-calendário.
+O campo da NFS-e tem orientações divergentes entre portais: o guia do Emissor
+Nacional pede a **nominal**, enquanto a prática de parte dos contadores usa a
+**efetiva**. A ferramenta expõe as duas com botão de cópia e um aviso explícito.
 
 ## Como rodar
 
@@ -33,10 +36,13 @@ worker; por isso o servidor local é o caminho recomendado.
 - **Cálculo manual:** aceita ano, atividade/anexo, RBT12, RBT12p ou receitas
   mensais anteriores, receita do PA, Fator R, mês de atividade e Simples híbrido.
 - Mostra a alíquota **por atividade**, com o anexo editável quando a descrição
-  do extrato não basta.
+  do extrato não basta, e sinaliza o que não gera NFS-e (mercadoria) e o que tem
+  ISS retido.
+- Confere o DAS calculado contra o DAS do extrato (marca “✓ confere”) e avisa
+  quando o extrato importado está de um PA anterior ao último disponível.
 - Exibe a memória de cálculo e a partilha por tributo. Na 5ª faixa do Anexo III,
   limita o ISS efetivo a 5% e redistribui a diferença entre os demais tributos.
-- Botão para copiar a alíquota já formatada (ex.: `10,23`).
+- Botões para copiar a alíquota efetiva e a nominal já formatadas (ex.: `10,23467`).
 
 ## Períodos suportados
 
@@ -63,7 +69,12 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
 - O histórico mensal é digitado pelo usuário; a ferramenta não importa livros ou
   arquivos contábeis para reconstruir as receitas.
 - A alíquota por atividade é a carga do anexo, antes de exclusões de ICMS ST,
-  monofásico e retenção de ISS — o mesmo critério do extrato do PGDAS-D.
+  monofásico e retenção de ISS. A coluna “DAS pago” mostra o valor depois dessas
+  exclusões, calculado a partir do extrato.
+- A alíquota geral (DAS total ÷ receita total) é uma média ponderada do mês e
+  serve apenas para conferir o DAS total — não deve ser usada em uma nota.
+- As alíquotas mudam a cada apuração, porque a RBT12 muda. Reimporte o extrato
+  do PA mais recente antes de emitir.
 - Ferramenta de apoio. Não substitui o extrato oficial nem a orientação de um
   contador.
 

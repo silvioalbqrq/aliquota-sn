@@ -149,6 +149,66 @@
     return base;
   }
 
+  function ehMercadoria(descricao) {
+    return /revenda de mercadorias|com[ée]rcio|industrializa|ind[uú]stria/i.test(descricao || '');
+  }
+
+  function temST(descricao) {
+    var d = String(descricao || '');
+    return /substitui[cç][aã]o tribut[aá]ria/i.test(d) && !/reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/i.test(d);
+  }
+
+  function temMonofasico(descricao) {
+    return /monof[aá]sica/i.test(descricao || '');
+  }
+
+  function issRetido(descricao) {
+    return /com reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/i.test(descricao || '');
+  }
+
+  /* Tributos que o PGDAS tira da base do DAS (ST, monofásico e ISS retido).
+     O restante da alíquota do anexo é o que aparece como DAS. */
+  function foraDoDAS(descricao, resultado) {
+    var chaves = [];
+    if (temST(descricao)) chaves.push('ICMS');
+    if (temMonofasico(descricao)) chaves.push('PIS', 'COFINS');
+    if (issRetido(descricao)) chaves.push('ISS');
+    var total = 0;
+    if (resultado && !resultado.erro) {
+      chaves.forEach(function (chave) { total += resultado.aliquotasTributos[chave] || 0; });
+    }
+    return { chaves: chaves, total: total };
+  }
+
+  function notaForaDoDAS(descricao, fora, dasPct) {
+    var itens = [];
+    if (temST(descricao)) itens.push('ICMS (substituição tributária)');
+    if (temMonofasico(descricao)) itens.push('PIS/COFINS (monofásico)');
+    if (issRetido(descricao)) itens.push('ISS (retido pelo tomador)');
+    if (!itens.length) return '';
+    var texto = 'Fora do DAS: ' + itens.join(', ') + ' — ' + pct(fora.total, 5) + ' da receita.';
+    if (dasPct != null) texto += ' Por isso o DAS efetivo é ' + pct(dasPct, 5) + '.';
+    return texto;
+  }
+
+  /* Último PA cujo DAS já venceu (dia 20 do mês seguinte). */
+  function paMaisRecente(hoje) {
+    var dia = hoje.getDate();
+    var mes = hoje.getMonth() + 1;
+    var ano = hoje.getFullYear();
+    mes -= dia >= 20 ? 1 : 2;
+    while (mes < 1) { mes += 12; ano -= 1; }
+    return { mes: mes, ano: ano };
+  }
+
+  function fmtPA(p) {
+    return (p.mes < 10 ? '0' + p.mes : p.mes) + '/' + p.ano;
+  }
+
+  function mesesDeDiferenca(de, para) {
+    return (para.ano - de.ano) * 12 + (para.mes - de.mes);
+  }
+
   /* ---------- estados do painel ---------- */
 
   function renderVazio(titulo, texto) {
@@ -233,19 +293,36 @@
     var aliquotaGeral = totalReceita > 0 ? (totalDAS / totalReceita) * 100 : 0;
 
     html += '<div class="geral">';
-    html +=   '<span class="geral-label">Alíquota geral do DAS — todas as atividades</span>';
+    html +=   '<div>';
+    html +=     '<span class="geral-label">Alíquota geral do DAS — média do mês</span>';
+    html +=     '<small>DAS total ' + moeda(totalDAS) + ' ÷ receita total ' + moeda(totalReceita) + '</small>';
+    html +=   '</div>';
     html +=   '<strong>' + pct(aliquotaGeral, 5) + '</strong>';
-    html +=   '<small>DAS total ' + moeda(totalDAS) + ' ÷ receita total ' + moeda(totalReceita) + '</small>';
     html += '</div>';
+    html += '<p class="geral-hint">Média ponderada das atividades do extrato. Serve para conferir o DAS total — não use este percentual em uma nota individual.</p>';
+
+    var referencia = paMaisRecente(new Date());
+    if (d.mes && d.ano && mesesDeDiferenca(d, referencia) > 0) {
+      html += '<div class="alerta">' + ICONE_ALERTA +
+        '<div><strong>Extrato de um período anterior.</strong> Este é o PA ' + esc(d.pa || '—') +
+        ', mas o PA ' + fmtPA(referencia) + ' já está disponível. A alíquota muda quando a RBT12 muda — ' +
+        'importe o extrato mais recente antes de emitir.</div></div>';
+    }
 
     html += '<div class="section-mini">';
-    html +=   '<div><h3>Alíquota por atividade</h3><p>Copie o percentual da coluna à direita para o campo da NFS-e.</p></div>';
+    html +=   '<div><h3>Alíquota por atividade</h3><p>Efetiva, nominal da faixa e o DAS cobrado, lado a lado.</p></div>';
     if (d.ano >= 2027) {
       html += '<label class="toggle-hibrido"><input type="checkbox" id="hibrido-pdf"' + (estado.hibridoPDF ? ' checked' : '') + '> Simples híbrido</label>';
     }
     html += '</div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span>Alíquota DAS</span><span></span></div>';
+    html += '<div class="alerta">' + ICONE_ALERTA +
+      '<div><strong>Efetiva ou nominal?</strong> O guia oficial do Emissor Nacional manda preencher o campo ' +
+      '“Alíquota no Simples Nacional” com a alíquota <strong>nominal</strong> da faixa (13,50% no Anexo III, ' +
+      '9,50% no Anexo I). A <strong>efetiva</strong> é a carga real do período. Confirme a ajuda do campo no ' +
+      'seu portal — os dois valores estão na tabela.</div></div>';
+
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Efetiva</span><span>Nominal</span><span>DAS pago</span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -265,14 +342,31 @@
         });
       }
 
+      var descricao = atividade.descricao || '';
+      var dasPct = (atividade.receita != null && atividade.totalDAS != null && atividade.receita > 0)
+        ? (atividade.totalDAS / atividade.receita) * 100
+        : null;
+      var fora = (resultado && !resultado.erro) ? foraDoDAS(descricao, resultado) : null;
+
       var dadosAtividade = [];
       if (atividade.receita != null) dadosAtividade.push('Receita ' + moeda(atividade.receita));
       if (atividade.totalDAS != null) dadosAtividade.push('DAS ' + moeda(atividade.totalDAS));
 
+      var tags = '';
+      if (ehMercadoria(descricao)) tags += ' <span class="tag tag-warn">Não gera NFS-e</span>';
+      if (issRetido(descricao)) tags += ' <span class="tag tag-info">ISS retido</span>';
+
       html += '<div class="ativ">';
       html +=   '<div class="ativ-main">';
-      html +=     '<p class="ativ-desc">' + esc(rotuloAtividade(atividade.descricao)) + '</p>';
+      html +=     '<p class="ativ-desc">' + esc(rotuloAtividade(descricao)) + tags + '</p>';
       html +=     '<p class="ativ-meta">' + esc(dadosAtividade.join(' · ')) + '</p>';
+      if (fora) {
+        var nota = notaForaDoDAS(descricao, fora, dasPct);
+        if (ehMercadoria(descricao)) {
+          nota = 'Venda de mercadoria sai por NF-e, não por NFS-e. ' + nota;
+        }
+        if (nota) html += '<p class="ativ-nota">' + esc(nota) + '</p>';
+      }
       html +=   '</div>';
 
       html += '<select class="ativ-anexo" data-idx="' + i + '" aria-label="Anexo da atividade ' + (i + 1) + '">';
@@ -289,15 +383,23 @@
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
-        html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
-        var dasPct = '';
-        if (atividade.receita != null && atividade.totalDAS != null && atividade.receita > 0) {
-          dasPct = pct((atividade.totalDAS / atividade.receita) * 100, 5);
-        }
-        html += '<div class="ativ-rate das-rate">' + (dasPct || '—') + '</div>';
-        html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
+        var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
+        html += '<div class="ativ-rate">' +
+          '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
+          '<span>' + esc(complemento) + '</span>' +
+          '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
+          '</div>';
+        html += '<div class="ativ-rate nominal-rate">' +
+          '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
+          '<span>nominal · ' + resultado.faixa + 'ª faixa</span>' +
+          '<button class="link-copy" data-copiar="' + num(resultado.nominal, 2) + '">copiar</button>' +
+          '</div>';
+        html += '<div class="ativ-rate das-rate">' + (dasPct != null ? pct(dasPct, 5) : '—') +
+          (confere ? '<span class="das-check">✓ confere</span>' : '') + '</div>';
       } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><div class="ativ-rate das-rate">—</div><span></span>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span></span></div>';
+        html += '<div class="ativ-rate das-rate">—</div>';
       }
       html += '</div>';
     });
@@ -306,7 +408,7 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> informe o percentual no campo “Alíquota no Simples Nacional” (Passo 19). A alíquota do anexo é a carga aproximada da atividade, antes de exclusões de ST, monofásico e retenção de ISS — o mesmo critério do extrato.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> “Efetiva” é a alíquota do art. 18, §1º-A da LC 123/2006 (carga real do período); “Nominal” é a da faixa, que o guia do emissor indica para o campo “Alíquota no Simples Nacional”; “DAS” é o que o extrato cobrou, já sem ST, monofásico e retenção de ISS. Confirme o rótulo e a ajuda do campo no seu portal antes de copiar. Reimporte o extrato a cada apuração — a alíquota muda quando a RBT12 muda.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
@@ -336,12 +438,21 @@
 
     html += '<div class="ratecard">';
     html +=   '<div>';
-    html +=     '<p class="rate-label">Alíquota efetiva para a NFS-e</p>';
+    html +=     '<p class="rate-label">Alíquota efetiva do período</p>';
     html +=     '<div class="rate-value">' + num(resultado.efetiva, 5) + '<small>%</small></div>';
     html +=     '<p class="rate-sub">' + esc(resultado.anexoNome) + ' · ' + resultado.faixa + 'ª faixa · vigência ' + esc(resultado.vigencia) + (resultado.hibrido ? ' · Simples híbrido' : '') + '</p>';
+    html +=     '<p class="rate-sub">Alíquota nominal da faixa: <b>' + pct(resultado.nominal, 2) + '</b> — guia do emissor para o campo “Alíquota no Simples Nacional”.</p>';
     html +=   '</div>';
-    html +=   '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar alíquota</button>';
+    html +=   '<div class="rate-acoes">';
+    html +=     '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar efetiva</button>';
+    html +=     '<button class="btn btn-copy" data-copiar="' + num(resultado.nominal, 2) + '">Copiar nominal</button>';
+    html +=   '</div>';
     html += '</div>';
+
+    html += '<div class="alerta">' + ICONE_ALERTA +
+      '<div><strong>Efetiva ou nominal?</strong> O guia oficial do Emissor Nacional manda preencher o campo ' +
+      '“Alíquota no Simples Nacional” com a alíquota <strong>nominal</strong> da faixa. A <strong>efetiva</strong> ' +
+      'é a carga real do período. Confirme a ajuda do campo no seu portal.</div></div>';
 
     html += '<div class="meta-grid">';
     html += meta(resultado.primeiraFaixaForcada ? 'Base de enquadramento' : (resultado.usouRBT12p ? 'Base proporcionalizada' : 'Base (RBT12)'), resultado.primeiraFaixaForcada ? '1ª faixa' : moeda(resultado.base), resultado.primeiraFaixaForcada ? 'regra dos 1º e 2º meses de atividade em 2027+' : (resultado.usouRBT12p ? 'início de atividade' : '12 meses de referência'));

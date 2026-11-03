@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alíquota Simples Nacional — cálculo para a NFS-e</title>
-  <meta name="description" content="Calcule a alíquota efetiva do Simples Nacional para o campo Valor aproximado dos tributos da NFS-e. Importe o extrato do PGDAS-D ou informe os dados manualmente.">
+  <meta name="description" content="Calcule a alíquota efetiva e a nominal do Simples Nacional para o campo Alíquota no Simples Nacional e para o Valor aproximado dos tributos da NFS-e. Importe o extrato do PGDAS-D ou informe os dados manualmente.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f2544'/><path d='M10 22L22 10' stroke='%2334d399' stroke-width='2.5' stroke-linecap='round'/><circle cx='11' cy='11' r='3' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='21' cy='21' r='3' fill='none' stroke='%23fff' stroke-width='2'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
       <div class="wrap hero-inner">
         <p class="eyebrow">LC 123/2006 · LC 214/2025 · Resolução CGSN 190/2026</p>
         <h1>A alíquota certa para o campo <span>“Valor aproximado dos tributos”</span> da NFS-e</h1>
-        <p class="hero-sub">Importe o extrato do PGDAS-D e o cálculo é feito na hora, por atividade e por anexo. Sem instalar nada, sem enviar o arquivo para servidor.</p>
+        <p class="hero-sub">Importe o extrato do PGDAS-D e veja, lado a lado, a alíquota efetiva, a nominal da faixa e o DAS que foi realmente cobrado. Sem instalar nada, sem enviar o arquivo para servidor.</p>
         <div class="hero-stats">
           <div><strong>5</strong><span>anexos do Simples</span></div>
           <div><strong>2026</strong><span>e transição 2027–2028</span></div>
@@ -168,7 +168,7 @@
             <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
           </span>
           <h2>Seu resultado aparece aqui</h2>
-          <p>Importe o extrato do PGDAS-D ou preencha o cálculo manual para ver a alíquota efetiva de cada atividade.</p>
+          <p>Importe o extrato do PGDAS-D ou preencha o cálculo manual para ver a alíquota efetiva e a nominal de cada atividade.</p>
         </div>
       </div>
     </section>
@@ -184,7 +184,7 @@
           <span class="card-num">01</span>
           <h3>Fórmula oficial</h3>
           <p class="formula-inline">(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12</p>
-          <p>A RBT12 define a faixa. A alíquota efetiva é o percentual que vai para a NFS-e.</p>
+          <p>A RBT12 define a faixa. A alíquota efetiva é a carga real do período; o campo “Alíquota no Simples Nacional” do emissor, pelo guia oficial, pede a alíquota nominal da faixa. A ferramenta mostra as duas.</p>
         </article>
         <article class="card">
           <span class="card-num">02</span>
