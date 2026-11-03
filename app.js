@@ -271,12 +271,12 @@
       if (resultado && !resultado.erro) {
         var complemento = '';
         if (resultado.hibrido) {
-          complemento = pct(resultado.dentro) + ' no DAS · ' + pct(resultado.fora) + ' IBS/CBS';
+          complemento = pct(resultado.dentro, 5) + ' no DAS · ' + pct(resultado.fora, 5) + ' IBS/CBS';
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
-        html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva) + '</strong><span>' + esc(complemento) + '</span></div>';
-        html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva) + '">Copiar</button>';
+        html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
+        html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
       } else {
         html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
       }
@@ -317,10 +317,10 @@
     html += '<div class="ratecard">';
     html +=   '<div>';
     html +=     '<p class="rate-label">Alíquota efetiva para a NFS-e</p>';
-    html +=     '<div class="rate-value">' + num(resultado.efetiva) + '<small>%</small></div>';
+    html +=     '<div class="rate-value">' + num(resultado.efetiva, 5) + '<small>%</small></div>';
     html +=     '<p class="rate-sub">' + esc(resultado.anexoNome) + ' · ' + resultado.faixa + 'ª faixa · vigência ' + esc(resultado.vigencia) + (resultado.hibrido ? ' · Simples híbrido' : '') + '</p>';
     html +=   '</div>';
-    html +=   '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva) + '">Copiar alíquota</button>';
+    html +=   '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar alíquota</button>';
     html += '</div>';
 
     html += '<div class="meta-grid">';
@@ -331,9 +331,9 @@
     html += '</div>';
 
     if (resultado.primeiraFaixaForcada) {
-      html += '<div class="formula">Regra de início de atividade: aplica-se a alíquota nominal da 1ª faixa — <b>' + pct(resultado.efetiva, 4) + '</b>.</div>';
+      html += '<div class="formula">Regra de início de atividade: aplica-se a alíquota nominal da 1ª faixa — <b>' + pct(resultado.efetiva, 5) + '</b>.</div>';
     } else {
-      html += '<div class="formula">(' + num(resultado.base) + ' × ' + pct(resultado.nominal) + ' − ' + num(resultado.deduzir) + ') ÷ ' + num(resultado.base) + ' = <b>' + pct(resultado.efetiva, 4) + '</b></div>';
+      html += '<div class="formula">(' + num(resultado.base) + ' × ' + pct(resultado.nominal) + ' − ' + num(resultado.deduzir) + ') ÷ ' + num(resultado.base) + ' = <b>' + pct(resultado.efetiva, 5) + '</b></div>';
     }
 
     if (entrada.rpa > 0) {
@@ -343,7 +343,7 @@
     }
 
     if (resultado.hibrido) {
-      html += '<div class="hibrido-info"><strong>Simples híbrido</strong>Do total de ' + pct(resultado.efetiva) + ', ' + pct(resultado.dentro) + ' permanece no DAS e ' + pct(resultado.fora) + ' corresponde à parcela de IBS/CBS recolhida fora. No regime regular, IBS e CBS são apurados separadamente.</div>';
+      html += '<div class="hibrido-info"><strong>Simples híbrido</strong>Do total de ' + pct(resultado.efetiva, 5) + ', ' + pct(resultado.dentro, 5) + ' permanece no DAS e ' + pct(resultado.fora, 5) + ' corresponde à parcela de IBS/CBS recolhida fora. No regime regular, IBS e CBS são apurados separadamente.</div>';
     }
 
     html += '<table class="partilha">';
@@ -357,12 +357,12 @@
       html += '<tr' + (fora ? ' class="fora"' : '') + '>';
       html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
       html += '<td>' + pct(fatia) + '</td>';
-      html += '<td>' + pct(aliquota, 4) + '</td>';
+      html += '<td>' + pct(aliquota, 5) + '</td>';
       if (entrada.rpa > 0) html += '<td>' + moeda(entrada.rpa * aliquota / 100) + '</td>';
       html += '</tr>';
     });
 
-    html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 4) + '</td>' +
+    html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 5) + '</td>' +
       (entrada.rpa > 0 ? '<td>' + moeda(entrada.rpa * resultado.efetiva / 100) + '</td>' : '') + '</tr>';
     html += '</tbody></table>';
 
