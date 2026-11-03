@@ -290,6 +290,10 @@
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
         html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
+        if (atividade.receita != null && atividade.totalDAS != null && Number(atividade.receita) > 0) {
+          var dasAtividade = (Number(atividade.totalDAS) / Number(atividade.receita)) * 100;
+          html += '<div class="ativ-das">DAS ' + pct(dasAtividade, 5) + '</div>';
+        }
         html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
       } else {
         html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
