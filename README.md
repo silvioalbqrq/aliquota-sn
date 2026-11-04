@@ -42,7 +42,8 @@ worker; por isso o servidor local é o caminho recomendado.
   do extrato não basta, e sinaliza o que não gera NFS-e (mercadoria) e o que tem
   ISS retido.
 - A alíquota nominal aparece em cartão verde marcado “Portal Contribuinte”, com
-  botão de cópia — é o valor que vai no campo “Alíquota no Simples Nacional”.
+  botão de cópia — é o valor que vai no campo “Alíquota no Simples Nacional”. Em
+  atividades de comércio (que não geram NFS-e), o cartão fica neutro e sem botão.
 - Confere o DAS calculado contra o DAS do extrato (marca “✓ confere”) e avisa
   quando o extrato importado está de um PA anterior ao último disponível.
 - Exibe a memória de cálculo e a partilha por tributo. Na 5ª faixa do Anexo III,
@@ -80,8 +81,6 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
 - A alíquota efetiva é a carga do anexo, antes de exclusões de ICMS ST,
   monofásico e retenção de ISS. A coluna “DAS pago” mostra o valor depois dessas
   exclusões, calculado a partir do extrato.
-- A alíquota geral (DAS total ÷ receita total) é uma média ponderada do mês e
-  serve apenas para conferir o DAS total — não deve ser usada em uma nota.
 - As alíquotas mudam a cada apuração, porque a RBT12 muda. Reimporte o extrato
   do PA mais recente antes de emitir.
 - Ferramenta de apoio. Não substitui o extrato oficial nem a orientação de um

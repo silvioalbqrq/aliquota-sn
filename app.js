@@ -166,13 +166,6 @@
     return /com reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/i.test(descricao || '');
   }
 
-  /* Incidências que o art. 9º do Decreto 8.264/2014 manda somar ao percentual
-     informado no campo, por serem cobradas fora do Simples. */
-  function temAdicionalArt9(descricao) {
-    return temST(descricao) || temMonofasico(descricao) ||
-      /industrializa|ind[uú]stria/i.test(descricao || '');
-  }
-
   /* Tributos que o PGDAS tira da base do DAS (ST, monofásico e ISS retido).
      O restante da alíquota do anexo é o que aparece como DAS. */
   function foraDoDAS(descricao, resultado) {
@@ -185,17 +178,6 @@
       chaves.forEach(function (chave) { total += resultado.aliquotasTributos[chave] || 0; });
     }
     return { chaves: chaves, total: total };
-  }
-
-  function notaForaDoDAS(descricao, fora, dasPct) {
-    var itens = [];
-    if (temST(descricao)) itens.push('ICMS (substituição tributária)');
-    if (temMonofasico(descricao)) itens.push('PIS/COFINS (monofásico)');
-    if (issRetido(descricao)) itens.push('ISS (retido pelo tomador)');
-    if (!itens.length) return '';
-    var texto = 'Fora do DAS: ' + itens.join(', ') + ' — ' + pct(fora.total, 5) + ' da receita.';
-    if (dasPct != null) texto += ' Por isso o DAS efetivo é ' + pct(dasPct, 5) + '.';
-    return texto;
   }
 
   /* Último PA cujo DAS já venceu (dia 20 do mês seguinte). */
@@ -291,23 +273,6 @@
     }
     html += '</div>';
 
-    var totalReceita = 0;
-    var totalDAS = 0;
-    d.atividades.forEach(function (atividade) {
-      if (atividade.receita != null) totalReceita += Number(atividade.receita);
-      if (atividade.totalDAS != null) totalDAS += Number(atividade.totalDAS);
-    });
-    var aliquotaGeral = totalReceita > 0 ? (totalDAS / totalReceita) * 100 : 0;
-
-    html += '<div class="geral">';
-    html +=   '<div>';
-    html +=     '<span class="geral-label">Alíquota geral do DAS — média do mês</span>';
-    html +=     '<small>DAS total ' + moeda(totalDAS) + ' ÷ receita total ' + moeda(totalReceita) + '</small>';
-    html +=   '</div>';
-    html +=   '<strong>' + pct(aliquotaGeral, 5) + '</strong>';
-    html += '</div>';
-    html += '<p class="geral-hint">Média ponderada das atividades do extrato. Serve para conferir o DAS total — não use este percentual em uma nota individual.</p>';
-
     var referencia = paMaisRecente(new Date());
     if (d.mes && d.ano && mesesDeDiferenca(d, referencia) > 0) {
       html += '<div class="alerta">' + ICONE_ALERTA +
@@ -324,11 +289,9 @@
     html += '</div>';
 
     html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
-      '<div><strong>É a coluna verde que vai para o Portal Contribuinte.</strong> No campo ' +
-      '“Alíquota no Simples Nacional”, informe a alíquota <strong>nominal</strong> destacada na tabela — ' +
-      'não a efetiva. É o que determina o Guia do Emissor Público Nacional Web da NFS-e (v. 1.2.1, p. 82 e 84), ' +
-      'com base no art. 9º do Decreto 8.264/2014. A efetiva serve para conferir o DAS. Se houver IPI, ST ou ' +
-      'monofásico embutido no preço, some uma estimativa ao percentual.</div></div>';
+      '<div><strong>Copie a coluna verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
+      'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
+      'A efetiva serve só para conferir o DAS.</div></div>';
 
     html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span><span>DAS pago</span></div>';
 
@@ -368,16 +331,6 @@
       html +=   '<div class="ativ-main">';
       html +=     '<p class="ativ-desc">' + esc(rotuloAtividade(descricao)) + tags + '</p>';
       html +=     '<p class="ativ-meta">' + esc(dadosAtividade.join(' · ')) + '</p>';
-      if (fora) {
-        var nota = notaForaDoDAS(descricao, fora, dasPct);
-        if (ehMercadoria(descricao)) {
-          nota = 'Venda de mercadoria sai por NF-e, não por NFS-e. ' + nota;
-        }
-        if (nota) html += '<p class="ativ-nota">' + esc(nota) + '</p>';
-        if (temAdicionalArt9(descricao)) {
-          html += '<p class="ativ-nota-sec">Art. 9º do Decreto 8.264/2014: some ao percentual uma estimativa de IPI, ST ou monofásico embutido no preço — a ferramenta não estima esse adicional.</p>';
-        }
-      }
       html +=   '</div>';
 
       html += '<select class="ativ-anexo" data-idx="' + i + '" aria-label="Anexo da atividade ' + (i + 1) + '">';
@@ -395,11 +348,18 @@
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
         var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
-        html += '<div class="ativ-rate nominal-rate">' +
-          '<span class="nominal-flag">Portal Contribuinte</span>' +
-          '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
-          '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
-          '</div>';
+        if (ehMercadoria(descricao)) {
+          html += '<div class="ativ-rate nominal-rate is-neutral">' +
+            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
+            '<span>não se aplica à NFS-e</span>' +
+            '</div>';
+        } else {
+          html += '<div class="ativ-rate nominal-rate">' +
+            '<span class="nominal-flag">Portal Contribuinte</span>' +
+            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
+            '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
+            '</div>';
+        }
         html += '<div class="ativ-rate efetiva-rate">' +
           '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
           '<span>' + esc(complemento) + '</span>' +
@@ -419,7 +379,7 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie a coluna <strong>“Campo (nominal)”</strong> — é a alíquota nominal da faixa que o art. 9º do Decreto 8.264/2014 manda informar, sem ST, IPI ou monofásico estimado. A <strong>“Efetiva”</strong> (art. 18, §1º-A, da LC 123/2006) é a carga real do período e serve para conferir o DAS. A <strong>“DAS pago”</strong> é o que o extrato cobrou, já sem ICMS ST, monofásico e ISS retido. Reimporte o extrato a cada apuração — a alíquota muda quando a RBT12 muda.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie a coluna verde (nominal). A <strong>efetiva</strong> confere o DAS; <strong>DAS pago</strong> é o valor cobrado, já sem ST, monofásico e ISS retido. Reimporte o extrato a cada apuração.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
