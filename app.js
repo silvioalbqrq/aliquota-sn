@@ -346,7 +346,6 @@
       } else {
         html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
       }
-      }
       html += '</div>';
     });
 
