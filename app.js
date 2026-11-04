@@ -293,7 +293,7 @@
       'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
       'A efetiva serve para conferir o DAS e já vem sem o ISS retido (III, IV e V), ICMS ST e monofásico.</div></div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva no DAS</span></div>';
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Alíquota Efetiva</span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)

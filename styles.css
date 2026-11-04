@@ -619,8 +619,8 @@ button, input, select { font: inherit; color: inherit; }
   .chip strong { font-size: .8rem; }
 
   .section-mini { margin: 10px 0 2px; }
-  .ativ-head { display: grid; padding: 5px 4px; }
-  .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 100px 118px 118px; gap: 8px; padding: 5px 4px; }
+  .ativ-head, .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 100px 118px 118px; gap: 8px; padding: 5px 4px; }
+  .ativ-head { font-size: .58rem; letter-spacing: .04em; }
   .ativ-desc { font-size: .76rem; }
   .ativ-meta { font-size: .68rem; margin-top: 1px; }
   .ativ-nota { font-size: .62rem; padding: 4px 6px; margin-top: 3px; }
