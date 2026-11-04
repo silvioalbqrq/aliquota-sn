@@ -291,9 +291,9 @@
     html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
       '<div><strong>Copie a coluna verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
       'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
-      'A efetiva serve só para conferir o DAS.</div></div>';
+      'A efetiva serve para conferir o DAS e já vem sem o ISS retido (III, IV e V), ICMS ST e monofásico.</div></div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span></div>';
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva no DAS</span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -340,11 +340,16 @@
       html += '</select>';
 
       if (resultado && !resultado.erro) {
+        /* O DAS não cobra o que é retido/substituído na fonte (ISS, ICMS ST, monofásico). */
+        var efetivaDAS = resultado.efetiva;
+        if (!resultado.hibrido && fora && fora.total > 0) efetivaDAS = resultado.efetiva - fora.total;
+
         var complemento = '';
         if (resultado.hibrido) {
           complemento = pct(resultado.dentro, 5) + ' no DAS · ' + pct(resultado.fora, 5) + ' IBS/CBS';
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
+          if (efetivaDAS !== resultado.efetiva) complemento += ' · fora do DAS: ' + fora.chaves.join('/');
         }
         if (ehMercadoria(descricao)) {
           html += '<div class="ativ-rate nominal-rate is-neutral">' +
@@ -359,9 +364,9 @@
             '</div>';
         }
         html += '<div class="ativ-rate efetiva-rate">' +
-          '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
+          '<strong>' + pct(efetivaDAS, 5) + '</strong>' +
           '<span>' + esc(complemento) + '</span>' +
-          '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
+          '<button class="link-copy" data-copiar="' + num(efetivaDAS, 5) + '">copiar</button>' +
           '</div>';
       } else {
         html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div>';
