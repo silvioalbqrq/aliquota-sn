@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alíquota Simples Nacional — cálculo para a NFS-e</title>
-  <meta name="description" content="Calcule a alíquota efetiva e a nominal do Simples Nacional para o campo Alíquota no Simples Nacional e para o Valor aproximado dos tributos da NFS-e. Importe o extrato do PGDAS-D ou informe os dados manualmente.">
+  <meta name="description" content="Calcule a alíquota nominal do Simples Nacional para o campo “Alíquota no Simples Nacional” da NFS-e e veja a efetiva ao lado. Importe o extrato do PGDAS-D ou informe os dados manualmente.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230f2544'/><path d='M10 22L22 10' stroke='%2334d399' stroke-width='2.5' stroke-linecap='round'/><circle cx='11' cy='11' r='3' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='21' cy='21' r='3' fill='none' stroke='%23fff' stroke-width='2'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
       <div class="wrap hero-inner">
         <p class="eyebrow">LC 123/2006 · LC 214/2025 · Resolução CGSN 190/2026</p>
         <h1>A alíquota certa para o campo <span>“Valor aproximado dos tributos”</span> da NFS-e</h1>
-        <p class="hero-sub">Importe o extrato do PGDAS-D e veja, lado a lado, a alíquota efetiva, a nominal da faixa e o DAS que foi realmente cobrado. Sem instalar nada, sem enviar o arquivo para servidor.</p>
+        <p class="hero-sub">Importe o extrato do PGDAS-D e veja a alíquota <strong>nominal</strong> que vai no campo “Alíquota no Simples Nacional” — e, ao lado, a efetiva e o DAS que foi realmente cobrado. Sem instalar nada, sem enviar o arquivo para servidor.</p>
         <div class="hero-stats">
           <div><strong>5</strong><span>anexos do Simples</span></div>
           <div><strong>2026</strong><span>e transição 2027–2028</span></div>
@@ -168,7 +168,7 @@
             <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
           </span>
           <h2>Seu resultado aparece aqui</h2>
-          <p>Importe o extrato do PGDAS-D ou preencha o cálculo manual para ver a alíquota efetiva e a nominal de cada atividade.</p>
+          <p>Importe o extrato do PGDAS-D ou preencha o cálculo manual para ver a alíquota nominal do campo e a efetiva de cada atividade.</p>
         </div>
       </div>
     </section>
@@ -177,20 +177,20 @@
       <div class="section-head">
         <p class="eyebrow">Como o cálculo funciona</p>
         <h2>A mesma conta que o PGDAS-D faz</h2>
-        <p>A alíquota efetiva não é a alíquota da tabela. Ela resulta da receita acumulada, da alíquota nominal e da parcela a deduzir da faixa.</p>
+        <p>O campo da NFS-e leva a alíquota <strong>nominal</strong> da faixa. A <strong>efetiva</strong>, que o PGDAS-D calcula, mostra a carga real do período e serve para conferir o DAS.</p>
       </div>
       <div class="cards3">
         <article class="card">
           <span class="card-num">01</span>
-          <h3>Fórmula oficial</h3>
+          <h3>Nominal × efetiva</h3>
           <p class="formula-inline">(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12</p>
-          <p>A RBT12 define a faixa. A alíquota efetiva é a carga real do período; o campo “Alíquota no Simples Nacional” do emissor, pelo guia oficial, pede a alíquota nominal da faixa. A ferramenta mostra as duas.</p>
+          <p>A RBT12 define a faixa e, com ela, a <strong>alíquota nominal</strong> (13,50% no Anexo III, 9,50% no Anexo I, na 3ª faixa). É essa que o art. 9º do Decreto 8.264/2014 manda informar no campo. A <strong>efetiva</strong> é o resultado da fórmula — a carga real do período.</p>
         </article>
         <article class="card">
           <span class="card-num">02</span>
           <h3>Por atividade</h3>
           <p>Cada atividade tem seu anexo. Comércio usa o Anexo I; indústria, o II; serviços, III, IV ou V conforme o caso.</p>
-          <p>O extrato traz a alíquota de cada atividade separadamente — e é ela que interessa.</p>
+          <p>O extrato traz a alíquota de cada atividade separadamente, mas ela é a <strong>efetiva</strong>. Para o campo, use a nominal do anexo.</p>
         </article>
         <article class="card">
           <span class="card-num">03</span>
@@ -236,6 +236,21 @@
           <span>Resolução CGSN nº 190/2026</span>
           <strong>Tabelas de 2027 e 2028</strong>
           <p>Alíquotas e partilha com CBS e IBS para os anos-calendário 2027 e 2028.</p>
+        </a>
+        <a class="leg-item" href="https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2014/decreto/d8264.htm" target="_blank" rel="noopener">
+          <span>Decreto nº 8.264/2014</span>
+          <strong>Regulamenta a Lei 12.741/2012</strong>
+          <p>Art. 9º: o optante do Simples informa apenas a alíquota <strong>nominal</strong> do regime, acrescida de estimativa de IPI, substituição tributária e monofásico.</p>
+        </a>
+        <a class="leg-item" href="https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12741.htm" target="_blank" rel="noopener">
+          <span>Lei nº 12.741/2012</span>
+          <strong>Transparência dos tributos</strong>
+          <p>Origem do campo “Valor aproximado dos tributos” e da exceção de informação simplificada para o Simples.</p>
+        </a>
+        <a class="leg-item" href="https://www.gov.br/nfse/pt-br" target="_blank" rel="noopener">
+          <span>Guia do Emissor Público Nacional Web</span>
+          <strong>NFS-e — v. 1.2.1</strong>
+          <p>P. 82 e 84: o campo “Alíquota no Simples Nacional” recebe “a alíquota nominal a qual está sujeita”, citando o art. 9º do Decreto 8.264/2014.</p>
         </a>
       </div>
     </section>
