@@ -323,15 +323,14 @@
     }
     html += '</div>';
 
-    html += '<div class="alerta alerta-info">' + ICONE_ALERTA_CIRC +
-      '<div><strong>O campo pede a alíquota nominal, não a efetiva.</strong> O Guia do Emissor Público ' +
-      'Nacional Web da NFS-e (v. 1.2.1, p. 82 e 84) é explícito: a ME/EPP informa “a alíquota nominal a qual ' +
-      'está sujeita”, conforme o art. 9º do Decreto 8.264/2014. A efetiva (art. 18, §1º-A, da LC 123/2006) é a ' +
-      'carga real do período — use-a para conferir o DAS, não no campo. Se a atividade tiver IPI, substituição ' +
-      'tributária ou monofásico embutido no preço, o art. 9º manda somar uma estimativa desses tributos ao ' +
-      'percentual; a ferramenta não calcula esse adicional.</div></div>';
+    html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
+      '<div><strong>É a coluna verde que vai para o Portal Contribuinte.</strong> No campo ' +
+      '“Alíquota no Simples Nacional”, informe a alíquota <strong>nominal</strong> destacada na tabela — ' +
+      'não a efetiva. É o que determina o Guia do Emissor Público Nacional Web da NFS-e (v. 1.2.1, p. 82 e 84), ' +
+      'com base no art. 9º do Decreto 8.264/2014. A efetiva serve para conferir o DAS. Se houver IPI, ST ou ' +
+      'monofásico embutido no preço, some uma estimativa ao percentual.</div></div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Campo (nominal)</span><span>Efetiva</span><span>DAS pago</span></div>';
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span><span>DAS pago</span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -397,9 +396,9 @@
         }
         var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
         html += '<div class="ativ-rate nominal-rate">' +
+          '<span class="nominal-flag">Portal Contribuinte</span>' +
           '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
-          '<span>nominal · ' + resultado.faixa + 'ª faixa</span>' +
-          '<button class="link-copy" data-copiar="' + num(resultado.nominal, 2) + '">copiar</button>' +
+          '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
           '</div>';
         html += '<div class="ativ-rate efetiva-rate">' +
           '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
@@ -452,16 +451,17 @@
     html +=   '<div class="rate-principal">';
     html +=     '<p class="rate-label">Alíquota no Simples Nacional — valor do campo</p>';
     html +=     '<div class="rate-value">' + num(resultado.nominal, 2) + '<small>%</small></div>';
+    html +=     '<p class="portal-pill">Use este valor no Portal Contribuinte</p>';
     html +=     '<p class="rate-sub">Nominal da ' + resultado.faixa + 'ª faixa · ' + esc(resultado.anexoNome) + ' · vigência ' + esc(resultado.vigencia) + (resultado.hibrido ? ' · Simples híbrido' : '') + '</p>';
     html +=     '<p class="rate-sub">Alíquota efetiva do período: <b>' + pct(resultado.efetiva, 5) + '</b> — carga real (art. 18, §1º-A, da LC 123/2006), para conferir o DAS.</p>';
     html +=   '</div>';
     html +=   '<div class="rate-acoes">';
-    html +=     '<button class="btn btn-copy" data-copiar="' + num(resultado.nominal, 2) + '">Copiar nominal</button>';
+    html +=     '<button class="btn btn-copy btn-copy-destaque" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>';
     html +=     '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar efetiva</button>';
     html +=   '</div>';
     html += '</div>';
 
-    html += '<div class="alerta alerta-info">' + ICONE_ALERTA_CIRC +
+    html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
       '<div><strong>O campo pede a alíquota nominal.</strong> Guia do Emissor Público Nacional Web da NFS-e ' +
       '(v. 1.2.1, p. 82 e 84), com base no art. 9º do Decreto 8.264/2014. A efetiva é a carga real do período. ' +
       'Se houver IPI, ST ou monofásico embutido no preço, some uma estimativa ao percentual.</div></div>';

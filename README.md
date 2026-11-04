@@ -41,6 +41,8 @@ worker; por isso o servidor local é o caminho recomendado.
 - Mostra a alíquota **por atividade**, com o anexo editável quando a descrição
   do extrato não basta, e sinaliza o que não gera NFS-e (mercadoria) e o que tem
   ISS retido.
+- A alíquota nominal aparece em cartão verde marcado “Portal Contribuinte”, com
+  botão de cópia — é o valor que vai no campo “Alíquota no Simples Nacional”.
 - Confere o DAS calculado contra o DAS do extrato (marca “✓ confere”) e avisa
   quando o extrato importado está de um PA anterior ao último disponível.
 - Exibe a memória de cálculo e a partilha por tributo. Na 5ª faixa do Anexo III,
