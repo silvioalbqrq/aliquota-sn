@@ -288,16 +288,7 @@
     }
     html += '</div>';
 
-<<<<<<< HEAD
     html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span></span></div>';
-=======
-    html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
-      '<div><strong>Copie a coluna verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
-      'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
-      'A efetiva serve só para conferir o DAS.</div></div>';
-
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span><span>DAS pago</span></div>';
->>>>>>> 25eceb35183abd682075c2aa6554d3adf20af5cd
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -350,37 +341,11 @@
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
-<<<<<<< HEAD
         html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
         html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
       } else {
         html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
-=======
-        var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
-        if (ehMercadoria(descricao)) {
-          html += '<div class="ativ-rate nominal-rate is-neutral">' +
-            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
-            '<span>não se aplica à NFS-e</span>' +
-            '</div>';
-        } else {
-          html += '<div class="ativ-rate nominal-rate">' +
-            '<span class="nominal-flag">Portal Contribuinte</span>' +
-            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
-            '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
-            '</div>';
-        }
-        html += '<div class="ativ-rate efetiva-rate">' +
-          '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
-          '<span>' + esc(complemento) + '</span>' +
-          '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
-          '</div>';
-        html += '<div class="ativ-rate das-rate">' + (dasPct != null ? pct(dasPct, 5) : '—') +
-          (confere ? '<span class="das-check">✓ confere</span>' : '') + '</div>';
-      } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div>';
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span></span></div>';
-        html += '<div class="ativ-rate das-rate">—</div>';
->>>>>>> 25eceb35183abd682075c2aa6554d3adf20af5cd
+      }
       }
       html += '</div>';
     });

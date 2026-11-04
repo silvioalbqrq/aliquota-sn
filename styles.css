@@ -322,11 +322,7 @@ button, input, select { font: inherit; color: inherit; }
 /* Activities */
 .ativ-head, .ativ {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: minmax(0, 1fr) 138px 168px 82px;
-=======
-  grid-template-columns: minmax(0, 1fr) 118px 132px 118px 100px;
->>>>>>> 25eceb35183abd682075c2aa6554d3adf20af5cd
   gap: 12px; align-items: center;
 }
 .ativ-head {
@@ -345,12 +341,7 @@ button, input, select { font: inherit; color: inherit; }
 }
 .ativ-anexo:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 .ativ-rate { text-align: right; }
-<<<<<<< HEAD
 .ativ-rate strong { display: block; font-size: 1.28rem; font-weight: 800; color: var(--emerald); letter-spacing: -.03em; line-height: 1.1; }
-=======
-.das-rate { text-align: right; color: #067a54; font-weight: 700; font-size: .88rem; }
-.ativ-rate strong { display: block; font-size: 1.18rem; font-weight: 800; color: var(--navy); letter-spacing: -.03em; line-height: 1.1; }
->>>>>>> 25eceb35183abd682075c2aa6554d3adf20af5cd
 .ativ-rate span { display: block; font-size: .64rem; color: var(--muted); margin-top: 3px; line-height: 1.3; }
 .ativ-rate.is-empty strong { color: #b6c2d2; }
 .nominal-rate {
@@ -629,11 +620,7 @@ button, input, select { font: inherit; color: inherit; }
 
   .section-mini { margin: 10px 0 2px; }
   .ativ-head { display: grid; padding: 5px 4px; }
-<<<<<<< HEAD
   .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 110px 130px 60px; gap: 8px; padding: 5px 4px; }
-=======
-  .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 100px 112px 100px 86px; gap: 8px; padding: 5px 4px; }
->>>>>>> 25eceb35183abd682075c2aa6554d3adf20af5cd
   .ativ-desc { font-size: .76rem; }
   .ativ-meta { font-size: .68rem; margin-top: 1px; }
   .ativ-nota { font-size: .62rem; padding: 4px 6px; margin-top: 3px; }
