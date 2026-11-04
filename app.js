@@ -282,13 +282,18 @@
     }
 
     html += '<div class="section-mini">';
-    html +=   '<div><h3>Alíquota por atividade</h3><p>O valor do campo, a efetiva e o DAS cobrado, lado a lado.</p></div>';
+    html +=   '<div><h3>Alíquota por atividade</h3><p>A alíquota nominal (para o portal) e a efetiva (para conferir o DAS).</p></div>';
     if (d.ano >= 2027) {
       html += '<label class="toggle-hibrido"><input type="checkbox" id="hibrido-pdf"' + (estado.hibridoPDF ? ' checked' : '') + '> Simples híbrido</label>';
     }
     html += '</div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span></span></div>';
+    html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
+      '<div><strong>Copie a coluna verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
+      'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
+      'A efetiva serve só para conferir o DAS.</div></div>';
+
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -341,10 +346,26 @@
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
-        html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
-        html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
+        if (ehMercadoria(descricao)) {
+          html += '<div class="ativ-rate nominal-rate is-neutral">' +
+            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
+            '<span>não se aplica à NFS-e</span>' +
+            '</div>';
+        } else {
+          html += '<div class="ativ-rate nominal-rate">' +
+            '<span class="nominal-flag">Portal Contribuinte</span>' +
+            '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
+            '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
+            '</div>';
+        }
+        html += '<div class="ativ-rate efetiva-rate">' +
+          '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
+          '<span>' + esc(complemento) + '</span>' +
+          '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
+          '</div>';
       } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span></span></div>';
       }
       html += '</div>';
     });
@@ -353,7 +374,7 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie a coluna verde (nominal). A <strong>efetiva</strong> confere o DAS; <strong>DAS pago</strong> é o valor cobrado, já sem ST, monofásico e ISS retido. Reimporte o extrato a cada apuração.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie a coluna verde (alíquota nominal) para o campo “Alíquota no Simples Nacional”. A coluna <strong>efetiva</strong> serve para conferir o DAS. Reimporte o extrato a cada apuração.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
