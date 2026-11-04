@@ -330,7 +330,7 @@ button, input, select { font: inherit; color: inherit; }
 /* Activities */
 .ativ-head, .ativ {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 138px 168px 118px 70px;
+  grid-template-columns: minmax(0, 1fr) 138px 168px 82px;
   gap: 12px; align-items: center;
 }
 .ativ-head {
@@ -348,7 +348,6 @@ button, input, select { font: inherit; color: inherit; }
 }
 .ativ-anexo:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 .ativ-rate { text-align: right; }
-.das-rate { text-align: right; color: #067a54; font-weight: 700; font-size: .92rem; }
 .ativ-rate strong { display: block; font-size: 1.28rem; font-weight: 800; color: var(--emerald); letter-spacing: -.03em; line-height: 1.1; }
 .ativ-rate span { display: block; font-size: .64rem; color: var(--muted); margin-top: 3px; line-height: 1.3; }
 .ativ-rate.is-empty strong { color: #b6c2d2; }
@@ -558,7 +557,7 @@ button, input, select { font: inherit; color: inherit; }
 
   .section-mini { margin: 10px 0 2px; }
   .ativ-head { display: grid; padding: 5px 4px; }
-  .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 110px 130px 100px 60px; gap: 8px; padding: 5px 4px; }
+  .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 110px 130px 60px; gap: 8px; padding: 5px 4px; }
   .ativ-desc { font-size: .76rem; }
   .ativ-meta { font-size: .68rem; margin-top: 1px; }
   .ativ-anexo { height: 26px; font-size: .68rem; }

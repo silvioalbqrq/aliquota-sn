@@ -245,7 +245,7 @@
     }
     html += '</div>';
 
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span>Alíquota DAS</span><span></span></div>';
+    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span>Alíquota NFS-e</span><span></span></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -267,7 +267,6 @@
 
       var dadosAtividade = [];
       if (atividade.receita != null) dadosAtividade.push('Receita ' + moeda(atividade.receita));
-      if (atividade.totalDAS != null) dadosAtividade.push('DAS ' + moeda(atividade.totalDAS));
 
       html += '<div class="ativ">';
       html +=   '<div class="ativ-main">';
@@ -290,14 +289,9 @@
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
         html += '<div class="ativ-rate"><strong>' + pct(resultado.efetiva, 5) + '</strong><span>' + esc(complemento) + '</span></div>';
-        var dasPct = '';
-        if (atividade.receita != null && atividade.totalDAS != null && atividade.receita > 0) {
-          dasPct = pct((atividade.totalDAS / atividade.receita) * 100, 5);
-        }
-        html += '<div class="ativ-rate das-rate">' + (dasPct || '—') + '</div>';
         html += '<button class="btn btn-copy" data-copiar="' + num(resultado.efetiva, 5) + '">Copiar</button>';
       } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><div class="ativ-rate das-rate">—</div><span></span>';
+        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div><span></span>';
       }
       html += '</div>';
     });
