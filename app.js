@@ -289,11 +289,9 @@
     html += '</div>';
 
     html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
-      '<div><strong>Copie a coluna verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
+      '<div><strong>Copie o cartão verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
       'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
-      'A efetiva serve só para conferir o DAS.</div></div>';
-
-    html += '<div class="ativ-head"><span>Atividade</span><span>Anexo</span><span class="col-portal">Alíquota no Portal</span><span>Efetiva</span><span>DAS pago</span></div>';
+      'O cartão azul é a alíquota efetiva do ISS; a efetiva geral serve só para conferir o DAS.</div></div>';
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -328,10 +326,11 @@
       if (issRetido(descricao)) tags += ' <span class="tag tag-info">ISS retido</span>';
 
       html += '<div class="ativ">';
-      html +=   '<div class="ativ-main">';
-      html +=     '<p class="ativ-desc">' + esc(rotuloAtividade(descricao)) + tags + '</p>';
-      html +=     '<p class="ativ-meta">' + esc(dadosAtividade.join(' · ')) + '</p>';
-      html +=   '</div>';
+      html +=   '<div class="ativ-top">';
+      html +=     '<div class="ativ-main">';
+      html +=       '<p class="ativ-desc">' + esc(rotuloAtividade(descricao)) + tags + '</p>';
+      html +=       '<p class="ativ-meta">' + esc(dadosAtividade.join(' · ')) + '</p>';
+      html +=     '</div>';
 
       html += '<select class="ativ-anexo" data-idx="' + i + '" aria-label="Anexo da atividade ' + (i + 1) + '">';
       html += '<option value="">Selecione</option>';
@@ -339,6 +338,9 @@
         html += '<option value="' + k + '"' + (k === anexo ? ' selected' : '') + '>' + ANEXOS_CURTOS[k] + '</option>';
       });
       html += '</select>';
+      html +=   '</div>';
+
+      html +=   '<div class="ativ-rates">';
 
       if (resultado && !resultado.erro) {
         var complemento = '';
@@ -348,30 +350,58 @@
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
         var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
+
         if (ehMercadoria(descricao)) {
           html += '<div class="ativ-rate nominal-rate is-neutral">' +
+            '<span class="rate-cap">Portal</span>' +
             '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
             '<span>não se aplica à NFS-e</span>' +
             '</div>';
         } else {
           html += '<div class="ativ-rate nominal-rate">' +
-            '<span class="nominal-flag">Portal Contribuinte</span>' +
+            '<span class="rate-cap">Portal Contribuinte</span>' +
             '<strong>' + pct(resultado.nominal, 2) + '</strong>' +
             '<button class="btn-portal" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>' +
             '</div>';
         }
+
+        var issPct = resultado.aliquotasTributos.ISS;
+        if (issPct != null) {
+          var issPartilha = resultado.partilha.ISS;
+          var issNota = pct(issPartilha, 1) + ' da efetiva' + (resultado.anexo === 'IV' ? ' · fora do DAS' : '');
+          html += '<div class="ativ-rate iss-rate">' +
+            '<span class="rate-cap">ISS efetivo</span>' +
+            '<strong>' + pct(issPct, 5) + '</strong>' +
+            '<span>' + issNota + '</span>' +
+            '</div>';
+        } else {
+          html += '<div class="ativ-rate iss-rate is-neutral">' +
+            '<span class="rate-cap">ISS efetivo</span>' +
+            '<strong>—</strong>' +
+            '<span>sem ISS no anexo</span>' +
+            '</div>';
+        }
+
         html += '<div class="ativ-rate efetiva-rate">' +
+          '<span class="rate-cap">Efetiva</span>' +
           '<strong>' + pct(resultado.efetiva, 5) + '</strong>' +
           '<span>' + esc(complemento) + '</span>' +
           '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
           '</div>';
-        html += '<div class="ativ-rate das-rate">' + (dasPct != null ? pct(dasPct, 5) : '—') +
-          (confere ? '<span class="das-check">✓ confere</span>' : '') + '</div>';
+
+        html += '<div class="ativ-rate das-rate">' +
+          '<span class="rate-cap">DAS pago</span>' +
+          '<strong>' + (dasPct != null ? pct(dasPct, 5) : '—') + '</strong>' +
+          (confere ? '<span class="das-check">✓ confere</span>' : '') +
+          '</div>';
       } else {
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span>selecione o anexo</span></div>';
-        html += '<div class="ativ-rate is-empty"><strong>—</strong><span></span></div>';
-        html += '<div class="ativ-rate das-rate">—</div>';
+        html += '<div class="ativ-rate is-empty"><span class="rate-cap">Portal</span><strong>—</strong><span>selecione o anexo</span></div>';
+        html += '<div class="ativ-rate is-empty"><span class="rate-cap">ISS efetivo</span><strong>—</strong></div>';
+        html += '<div class="ativ-rate is-empty"><span class="rate-cap">Efetiva</span><strong>—</strong></div>';
+        html += '<div class="ativ-rate is-empty"><span class="rate-cap">DAS pago</span><strong>—</strong></div>';
       }
+
+      html +=   '</div>';
       html += '</div>';
     });
 
@@ -379,7 +409,7 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie a coluna verde (nominal). A <strong>efetiva</strong> confere o DAS; <strong>DAS pago</strong> é o valor cobrado, já sem ST, monofásico e ISS retido. Reimporte o extrato a cada apuração.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie o cartão verde (nominal) para o Portal Contribuinte. O <strong>ISS efetivo</strong> é a fatia do ISS na partilha do anexo, calculada sobre a RBT12. A <strong>efetiva</strong> confere o DAS; <strong>DAS pago</strong> é o valor cobrado, já sem ST, monofásico e ISS retido.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
@@ -414,6 +444,10 @@
     html +=     '<p class="portal-pill">Use este valor no Portal Contribuinte</p>';
     html +=     '<p class="rate-sub">Nominal da ' + resultado.faixa + 'ª faixa · ' + esc(resultado.anexoNome) + ' · vigência ' + esc(resultado.vigencia) + (resultado.hibrido ? ' · Simples híbrido' : '') + '</p>';
     html +=     '<p class="rate-sub">Alíquota efetiva do período: <b>' + pct(resultado.efetiva, 5) + '</b> — carga real (art. 18, §1º-A, da LC 123/2006), para conferir o DAS.</p>';
+    if (resultado.partilha.ISS != null) {
+      html +=   '<p class="iss-pill">ISS efetivo: ' + pct(resultado.aliquotasTributos.ISS, 5) + '</p>';
+      html +=   '<p class="rate-sub">ISS = alíquota efetiva × ' + pct(resultado.partilha.ISS, 1) + ' da partilha' + (resultado.anexo === 'IV' ? ' — pago fora do DAS.' : '.') + '</p>';
+    }
     html +=   '</div>';
     html +=   '<div class="rate-acoes">';
     html +=     '<button class="btn btn-copy btn-copy-destaque" data-copiar="' + num(resultado.nominal, 2) + '">Copiar ' + pct(resultado.nominal, 2) + '</button>';

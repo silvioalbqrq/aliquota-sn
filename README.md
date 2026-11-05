@@ -1,12 +1,15 @@
 # Alíquota Simples
 
 Calculadora estática de alíquotas do Simples Nacional para a emissão de NFS-e.
-Mostra, por atividade, três números lado a lado:
+Mostra, por atividade, quatro números lado a lado:
 
-- **alíquota nominal** (coluna principal, com botão de cópia) — a da faixa, que é
+- **alíquota nominal** (cartão principal, com botão de cópia) — a da faixa, que é
   o valor do campo **“Alíquota no Simples Nacional”**. O Guia do Emissor Público
   Nacional Web da NFS-e (v. 1.2.1, p. 82 e 84) manda informar “a alíquota nominal
   a qual está sujeita”, com base no art. 9º do Decreto 8.264/2014;
+- **ISS efetivo** — a fatia do ISS na partilha do anexo (Anexos III, IV e V),
+  aplicada sobre a alíquota efetiva: `efetiva × % do ISS na partilha`. No Anexo IV
+  o ISS é pago fora do DAS; nos Anexos III e V, dentro;
 - **alíquota efetiva** — `(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12`
   (art. 18, §1º-A da LC 123/2006), a carga real do período, para conferir o DAS;
 - **DAS pago** — o que o extrato efetivamente cobrou, já sem ICMS ST, monofásico e
@@ -44,6 +47,9 @@ worker; por isso o servidor local é o caminho recomendado.
 - A alíquota nominal aparece em cartão verde marcado “Portal Contribuinte”, com
   botão de cópia — é o valor que vai no campo “Alíquota no Simples Nacional”. Em
   atividades de comércio (que não geram NFS-e), o cartão fica neutro e sem botão.
+- A alíquota efetiva do ISS aparece em cartão azul, com o mesmo destaque, calculada
+  pela partilha do anexo (Anexos III, IV e V). Anexos I e II não têm ISS e mostram
+  o cartão neutro.
 - Confere o DAS calculado contra o DAS do extrato (marca “✓ confere”) e avisa
   quando o extrato importado está de um PA anterior ao último disponível.
 - Exibe a memória de cálculo e a partilha por tributo. Na 5ª faixa do Anexo III,
@@ -81,6 +87,9 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
 - A alíquota efetiva é a carga do anexo, antes de exclusões de ICMS ST,
   monofásico e retenção de ISS. A coluna “DAS pago” mostra o valor depois dessas
   exclusões, calculado a partir do extrato.
+- O ISS efetivo segue a partilha da faixa do anexo escolhido. No Anexo IV ele é
+  recolhido fora do DAS; se o extrato indicar ISS retido, o valor não entra no DAS
+  daquela atividade.
 - As alíquotas mudam a cada apuração, porque a RBT12 muda. Reimporte o extrato
   do PA mais recente antes de emitir.
 - Ferramenta de apoio. Não substitui o extrato oficial nem a orientação de um
