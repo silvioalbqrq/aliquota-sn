@@ -230,6 +230,28 @@
 
   /* ---------- resultado do PDF ---------- */
 
+  function renderTributosCard(atividade, resultado, descricao, compacto) {
+    var receitaAtividade = atividade.receita != null ? atividade.receita : 0;
+    var temValor = receitaAtividade > 0;
+    var foraFn = function (chave) {
+      return (resultado.anexo === 'IV' && chave === 'ISS') ||
+        (resultado.hibrido && (chave === 'CBS' || chave === 'IBS')) ||
+        (issRetido(descricao) && chave === 'ISS');
+    };
+    var html = '<div class="tributos-card' + (compacto ? ' tributos-card-compacto' : '') + '">';
+    html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + ' — ' +
+              num(resultado.faixa, 0) + 'ª faixa</strong>' +
+              '<span>conferência · não sai na impressão</span></div>';
+    html +=   '<div class="tributos-scroll"><table class="partilha">';
+    html += tabelaPartilhaHTML(resultado, temValor, receitaAtividade, 'Valor (R$)', foraFn);
+    html +=   '</tbody></table></div>';
+    html +=   '<p class="tributos-nota' + (compacto ? ' tributos-nota-compacto' : '') + '">Alíquota = efetiva × partilha. Valor = receita da atividade no PA × alíquota.' +
+              (resultado.anexo === 'IV' ? ' No Anexo IV, o ISS é recolhido fora do DAS.' : '') +
+              (issRetido(descricao) ? ' ISS retido: não entra no DAS desta atividade.' : '') + '</p>';
+    html += '</div>';
+    return html;
+  }
+
   function renderDetalhesCompletos(d) {
     var html = '';
     html += '<div class="detalhes-completos">';
@@ -417,23 +439,7 @@
       html += '</div>';
 
       if (resultado && !resultado.erro && /^(III|IV|V)$/.test(resultado.anexo)) {
-        var receitaAtividade = atividade.receita != null ? atividade.receita : 0;
-        var temValor = receitaAtividade > 0;
-        html += '<div class="tributos-card">';
-        html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + ' — ' +
-                  num(resultado.faixa, 0) + 'ª faixa</strong>' +
-                  '<span>conferência · não sai na impressão</span></div>';
-        html +=   '<div class="tributos-scroll"><table class="partilha">';
-        html += tabelaPartilhaHTML(resultado, temValor, receitaAtividade, 'Valor (R$)', function (chave) {
-          return (resultado.anexo === 'IV' && chave === 'ISS') ||
-            (resultado.hibrido && (chave === 'CBS' || chave === 'IBS')) ||
-            (issRetido(descricao) && chave === 'ISS');
-        });
-        html +=   '</tbody></table></div>';
-        html +=   '<p class="tributos-nota">Alíquota = efetiva × partilha. Valor = receita da atividade no PA × alíquota.' +
-                  (resultado.anexo === 'IV' ? ' No Anexo IV, o ISS é recolhido fora do DAS.' : '') +
-                  (issRetido(descricao) ? ' ISS retido: não entra no DAS desta atividade.' : '') + '</p>';
-        html += '</div>';
+        html += renderTributosCard(atividade, resultado, descricao, estado.completoPDF);
       }
     });
 
