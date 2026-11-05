@@ -636,26 +636,43 @@ button, input, select { font: inherit; color: inherit; }
   .empresa h2 { font-size: 1rem; }
   .empresa .pa { padding: 5px 9px; border-radius: 7px; }
 
-  .chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 8px 0; }
-  .chip { padding: 5px 9px; border-radius: 7px; }
-  .chip strong { font-size: .8rem; }
+  .chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin: 5px 0; }
+  .chip { padding: 3px 7px; border-radius: 6px; font-size: .72rem; }
+  .chip strong { font-size: .75rem; }
+  .chip small { font-size: .58rem; }
 
-  .section-mini { margin: 10px 0 2px; }
-  .ativ { padding: 4px 2px; }
-  .ativ-top { flex-wrap: nowrap; gap: 10px; }
+  .section-mini { margin: 7px 0 1px; }
+  .section-mini h3 { font-size: .85rem; margin: 0 0 2px; }
+  .section-mini p { font-size: .62rem; margin: 0; }
+  .ativ { padding: 3px 1px; page-break-inside: avoid; }
+  .ativ-top { flex-wrap: nowrap; gap: 8px; }
   .ativ-main { flex: 1 1 auto; }
-  .ativ-rates { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 4px; }
+  .ativ-rates { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 3px; }
   .ativ-rates .ativ-rate:last-child { grid-column: auto; }
-  .ativ-desc { font-size: .74rem; }
-  .ativ-meta { font-size: .64rem; margin-top: 0; }
-  .ativ-anexo { flex: 0 0 116px; width: 116px; height: 22px; font-size: .64rem; padding: 0 2px; -webkit-appearance: none; appearance: none; text-align: center; }
-  .ativ-rate { padding: 3px 4px 4px; }
-  .ativ-rate .rate-cap { font-size: .44rem; }
-  .ativ-rate strong { font-size: .9rem; }
-  .ativ-rate span { font-size: .58rem; margin-top: 1px; }
-  .nominal-rate strong, .iss-rate strong { font-size: 1rem; }
+  .ativ-desc { font-size: .66rem; line-height: 1.25; margin: 0 0 2px; }
+  .ativ-meta { font-size: .6rem; margin-top: 0; line-height: 1.2; }
+  .ativ-anexo { display: none !important; }
+  .ativ-rate { padding: 2px 3px 3px; page-break-inside: avoid; }
+  .ativ-rate .rate-cap { font-size: .42rem; letter-spacing: .03em; min-height: 1.9em; }
+  .ativ-rate strong { font-size: .85rem; line-height: 1.1; }
+  .ativ-rate span { font-size: .52rem; margin-top: 1px; line-height: 1.2; }
+  .nominal-rate strong, .iss-rate strong { font-size: .95rem; }
   .link-copy, .btn-portal { display: none; }
 
-  .hibrido-info, .alerta, .destaque-portal { margin-top: 6px; padding: 6px 9px; }
-  .rodape-nota { margin-top: 8px; padding-top: 6px; }
+  .destaque-portal { margin-top: 5px; padding: 5px 8px; font-size: .72rem; }
+  .destaque-portal strong { font-size: .78rem; }
+  .hibrido-info, .alerta { margin-top: 4px; padding: 4px 8px; font-size: .72rem; }
+  .tributos-card { margin: 6px 0 1px; padding: 5px 7px 6px; font-size: .68rem; }
+  .tributos-head { gap: 6px; }
+  .tributos-head strong { font-size: .62rem; }
+  .tributos-head span { font-size: .52rem; }
+  .tributos-card .partilha { margin-top: 3px; }
+  .tributos-card .partilha th { padding: 3px 4px 2px; font-size: .5rem; }
+  .tributos-card .partilha td { padding: 2.5px 4px; }
+  .tributos-nota { font-size: .52rem; margin-top: 3px; line-height: 1.3; }
+  .tributos-card .total td { font-size: .7rem; }
+
+  .rodape-nota { font-size: .62rem; margin-top: 6px; padding-top: 5px; }
+  .acoes-resultado { margin-top: 6px; gap: 6px; }
+  .acoes-resultado .btn { padding: 2px 8px; font-size: .68rem; }
 }
