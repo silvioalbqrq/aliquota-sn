@@ -373,7 +373,8 @@
         var receitaAtividade = atividade.receita != null ? atividade.receita : 0;
         var temValor = receitaAtividade > 0;
         html += '<div class="tributos-card">';
-        html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + '</strong>' +
+        html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + ' — ' +
+                  num(resultado.faixa, 0) + 'ª faixa</strong>' +
                   '<span>conferência · não sai na impressão</span></div>';
         html +=   '<div class="tributos-scroll"><table class="partilha">';
         html +=     '<thead><tr><th>Tributo</th><th>% da partilha</th><th>Alíquota</th>' +
