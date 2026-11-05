@@ -94,6 +94,32 @@ const parseSintetico = PGDAS.parseTexto(textoSintetico);
 ok(!parseSintetico.erro && parseSintetico.dataAbertura === '10/01/2026' && parseSintetico.mes === 2,
   'parser extrai data de abertura e período para identificar mês de atividade');
 
+const textoRBT12pAntesDoRotulo = [
+  'Extrato do Simples Nacional',
+  'CNPJ Básico: 66.607.247',
+  'Nome Empresarial: Empresa Teste',
+  'Data de Abertura: 05/05/2026',
+  'Período de Apuração (PA): 09/2026',
+  'Receita Bruta do PA (RPA) - Competência 6.184,79 0,00 6.184,79',
+  'Receita bruta acumulada nos doze meses anteriores ao PA',
+  '42.197,82 0,00 42.197,82',
+  '(RBT12)',
+  'Receita bruta acumulada nos doze meses anteriores ao PA',
+  '126.593,46 0,00 126.593,46',
+  'proporcionalizada (RBT12p)',
+  'Receita bruta acumulada no ano-calendário corrente (RBA) 48.382,61 0,00 48.382,61',
+  'Valor do Débito por Tributo para a Atividade (R$):',
+  'Prestação de serviços',
+  'Receita Bruta Informada: R$ 6.184,79'
+].join('\n');
+const parseRBT12pAntes = PGDAS.parseTexto(textoRBT12pAntesDoRotulo);
+ok(parseRBT12pAntes.rbt12 === 42197.82 && parseRBT12pAntes.rbt12p === 126593.46,
+  'parser lê RBT12p quando o valor vem na linha acima do rótulo (lido: ' + parseRBT12pAntes.rbt12 + ' / ' + parseRBT12pAntes.rbt12p + ')');
+
+const parseRBT12pVazia = PGDAS.parseTexto(textoRBT12pAntesDoRotulo.replace('126.593,46 0,00 126.593,46\n', ''));
+ok(parseRBT12pVazia.rbt12p === null,
+  'RBT12p vazia no extrato não reaproveita a RBT12 (lido: ' + parseRBT12pVazia.rbt12p + ')');
+
 console.log('\n== Integridade das tabelas (partilha soma 100%) ==');
 [2026, 2027].forEach(function (ano) {
   const tabelas = TAB.tabelasDoAno(ano);

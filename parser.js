@@ -51,6 +51,31 @@
     return null;
   }
 
+  function indiceDoRotulo(linhas, rotulo) {
+    for (var i = 0; i < linhas.length; i++) {
+      if (linhas[i].indexOf(rotulo) >= 0) return i;
+    }
+    return -1;
+  }
+
+  /* A RBT12p vem impressa na linha acima do próprio rótulo quando está
+     preenchida. Quando está vazia, a linha acima é o rótulo da RBT12 — por isso
+     a busca para no rótulo "Receita bruta acumulada" e nunca volta até a RBT12. */
+  function valorRBT12p(linhas, indiceRBT12) {
+    for (var i = 0; i < linhas.length; i++) {
+      if (linhas[i].indexOf('(RBT12p)') < 0) continue;
+      var ns = numeros(linhas[i]);
+      if (ns.length) return ns[ns.length - 1];
+      for (var j = i - 1; j > indiceRBT12 && j >= 0; j--) {
+        if (/Receita bruta acumulada/i.test(linhas[j])) return null;
+        ns = numeros(linhas[j]);
+        if (ns.length) return ns[ns.length - 1];
+      }
+      return null;
+    }
+    return null;
+  }
+
   function anexoDaDescricao(descricao, fatorAnexo) {
     var d = descricao.toLowerCase();
     if (/anexo\s+iv\b/.test(d)) return 'IV';
@@ -97,7 +122,7 @@
 
     var rpa = valorNaLinha(linhas, function (l) { return /Receita Bruta do PA\s*\(RPA\)/i.test(l); });
     var rbt12 = valorRotulo(linhas, '(RBT12)', true);
-    var rbt12p = valorRotulo(linhas, '(RBT12p)', false);
+    var rbt12p = valorRBT12p(linhas, indiceDoRotulo(linhas, '(RBT12)'));
     var folha = valorRotulo(linhas, 'Total de Folhas', false);
 
     var fatorR = null;
