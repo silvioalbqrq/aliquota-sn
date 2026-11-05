@@ -486,10 +486,30 @@ button, input, select { font: inherit; color: inherit; }
 }
 .partilha .total td { font-weight: 800; border-top: 1.5px solid var(--line); border-bottom: 0; }
 
+.tributos-card {
+  margin: 9px 0 2px;
+  padding: 8px 10px 9px;
+  border: 1px dashed #c7d7ea;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+.tributos-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.tributos-head strong { font-size: .66rem; text-transform: uppercase; letter-spacing: .06em; color: #1e3a8a; }
+.tributos-head span { font-size: .58rem; color: var(--muted); }
+.tributos-scroll { overflow-x: auto; }
+.tributos-card .partilha { margin-top: 1px; font-size: .72rem; }
+.tributos-card .partilha th { padding: 5px 5px 4px; font-size: .54rem; }
+.tributos-card .partilha td { padding: 4px 5px; }
+.tributos-card .partilha td:first-child { font-weight: 600; white-space: nowrap; }
+.tributos-nota { font-size: .58rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+
 .rodape-nota { font-size: .68rem; color: var(--muted); margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
 .rodape-nota strong { color: var(--navy); }
 
-.acoes-resultado { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+@media print {
+  .tributos-card { display: none !important; }
+  @page { margin: 10mm; }
+}
 
 /* Metodologia */
 .metodologia { padding: 74px 0 8px; }

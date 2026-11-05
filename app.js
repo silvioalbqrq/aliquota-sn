@@ -368,6 +368,39 @@
 
       html +=   '</div>';
       html += '</div>';
+
+      if (resultado && !resultado.erro && /^(III|IV|V)$/.test(resultado.anexo)) {
+        var receitaAtividade = atividade.receita != null ? atividade.receita : 0;
+        var temValor = receitaAtividade > 0;
+        html += '<div class="tributos-card">';
+        html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + '</strong>' +
+                  '<span>conferência · não sai na impressão</span></div>';
+        html +=   '<div class="tributos-scroll"><table class="partilha">';
+        html +=     '<thead><tr><th>Tributo</th><th>% da partilha</th><th>Alíquota</th>' +
+                    (temValor ? '<th>Valor (R$)</th>' : '') + '</tr></thead><tbody>';
+
+        ORDEM_TRIBUTOS.forEach(function (chave) {
+          if (resultado.partilha[chave] == null) return;
+          var aliquota = resultado.aliquotasTributos[chave] || 0;
+          var fora = (resultado.anexo === 'IV' && chave === 'ISS') ||
+            (resultado.hibrido && (chave === 'CBS' || chave === 'IBS')) ||
+            (issRetido(descricao) && chave === 'ISS');
+          html += '<tr' + (fora ? ' class="fora"' : '') + '>';
+          html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
+          html += '<td>' + pct(resultado.partilha[chave], 2) + '</td>';
+          html += '<td>' + pct(aliquota, 5) + '</td>';
+          if (temValor) html += '<td>' + moeda(receitaAtividade * aliquota / 100) + '</td>';
+          html += '</tr>';
+        });
+
+        html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 5) + '</td>' +
+          (temValor ? '<td>' + moeda(receitaAtividade * resultado.efetiva / 100) + '</td>' : '') + '</tr>';
+        html +=   '</tbody></table></div>';
+        html +=   '<p class="tributos-nota">Alíquota = efetiva × partilha. Valor = receita da atividade no PA × alíquota.' +
+                  (resultado.anexo === 'IV' ? ' No Anexo IV, o ISS é recolhido fora do DAS.' : '') +
+                  (issRetido(descricao) ? ' ISS retido: não entra no DAS desta atividade.' : '') + '</p>';
+        html += '</div>';
+      }
     });
 
     if (estado.hibridoPDF && d.ano >= 2027) {
