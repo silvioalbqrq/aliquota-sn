@@ -36,6 +36,29 @@
 
   var ORDEM_TRIBUTOS = ['IRPJ', 'CSLL', 'COFINS', 'PIS', 'CBS', 'CPP', 'IPI', 'ICMS', 'ISS', 'IBS'];
 
+  /* Tabela de partilha por tributo. Usada tanto pelo relatório do PDF quanto
+     pelo cálculo manual; recebe as diferenças de cada fluxo por parâmetro. */
+  function tabelaPartilhaHTML(resultado, temValor, receita, rotuloValor, foraFn) {
+    var html = '<table class="partilha">';
+    html += '<thead><tr><th>Tributo</th><th>% da partilha</th><th>Alíquota</th>' +
+      (temValor ? '<th>' + rotuloValor + '</th>' : '') + '</tr></thead><tbody>';
+    ORDEM_TRIBUTOS.forEach(function (chave) {
+      if (resultado.partilha[chave] == null) return;
+      var aliquota = resultado.aliquotasTributos[chave] || 0;
+      var fora = foraFn ? foraFn(chave, resultado) : false;
+      html += '<tr' + (fora ? ' class="fora"' : '') + '>';
+      html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
+      html += '<td>' + pct(resultado.partilha[chave], 2) + '</td>';
+      html += '<td>' + pct(aliquota, 5) + '</td>';
+      if (temValor) html += '<td>' + moeda(receita * aliquota / 100) + '</td>';
+      html += '</tr>';
+    });
+    html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 5) + '</td>' +
+      (temValor ? '<td>' + moeda(receita * resultado.efetiva / 100) + '</td>' : '') + '</tr>';
+    html += '</tbody></table>';
+    return html;
+  }
+
   function $(id) { return document.getElementById(id); }
 
   function num(valor, casas) {
@@ -377,25 +400,11 @@
                   num(resultado.faixa, 0) + 'ª faixa</strong>' +
                   '<span>conferência · não sai na impressão</span></div>';
         html +=   '<div class="tributos-scroll"><table class="partilha">';
-        html +=     '<thead><tr><th>Tributo</th><th>% da partilha</th><th>Alíquota</th>' +
-                    (temValor ? '<th>Valor (R$)</th>' : '') + '</tr></thead><tbody>';
-
-        ORDEM_TRIBUTOS.forEach(function (chave) {
-          if (resultado.partilha[chave] == null) return;
-          var aliquota = resultado.aliquotasTributos[chave] || 0;
-          var fora = (resultado.anexo === 'IV' && chave === 'ISS') ||
+        html += tabelaPartilhaHTML(resultado, temValor, receitaAtividade, 'Valor (R$)', function (chave) {
+          return (resultado.anexo === 'IV' && chave === 'ISS') ||
             (resultado.hibrido && (chave === 'CBS' || chave === 'IBS')) ||
             (issRetido(descricao) && chave === 'ISS');
-          html += '<tr' + (fora ? ' class="fora"' : '') + '>';
-          html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
-          html += '<td>' + pct(resultado.partilha[chave], 2) + '</td>';
-          html += '<td>' + pct(aliquota, 5) + '</td>';
-          if (temValor) html += '<td>' + moeda(receitaAtividade * aliquota / 100) + '</td>';
-          html += '</tr>';
         });
-
-        html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 5) + '</td>' +
-          (temValor ? '<td>' + moeda(receitaAtividade * resultado.efetiva / 100) + '</td>' : '') + '</tr>';
         html +=   '</tbody></table></div>';
         html +=   '<p class="tributos-nota">Alíquota = efetiva × partilha. Valor = receita da atividade no PA × alíquota.' +
                   (resultado.anexo === 'IV' ? ' No Anexo IV, o ISS é recolhido fora do DAS.' : '') +
@@ -482,24 +491,9 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>Do total de ' + pct(resultado.efetiva, 5) + ', ' + pct(resultado.dentro, 5) + ' permanece no DAS e ' + pct(resultado.fora, 5) + ' corresponde à parcela de IBS/CBS recolhida fora. No regime regular, IBS e CBS são apurados separadamente.</div>';
     }
 
-    html += '<table class="partilha">';
-    html += '<thead><tr><th>Tributo</th><th>% da partilha</th><th>Alíquota</th>' + (entrada.rpa > 0 ? '<th>Valor estimado</th>' : '') + '</tr></thead><tbody>';
-
-    ORDEM_TRIBUTOS.forEach(function (chave) {
-      if (resultado.partilha[chave] == null) return;
-      var aliquota = resultado.aliquotasTributos[chave] || 0;
-      var fatia = resultado.efetiva > 0 ? aliquota / resultado.efetiva * 100 : 0;
-      var fora = resultado.hibrido && (chave === 'CBS' || chave === 'IBS');
-      html += '<tr' + (fora ? ' class="fora"' : '') + '>';
-      html += '<td>' + NOMES_TRIBUTOS[chave] + '</td>';
-      html += '<td>' + pct(fatia) + '</td>';
-      html += '<td>' + pct(aliquota, 5) + '</td>';
-      if (entrada.rpa > 0) html += '<td>' + moeda(entrada.rpa * aliquota / 100) + '</td>';
-      html += '</tr>';
+    html += tabelaPartilhaHTML(resultado, entrada.rpa > 0, entrada.rpa, 'Valor estimado', function (chave) {
+      return resultado.hibrido && (chave === 'CBS' || chave === 'IBS');
     });
-
-    html += '<tr class="total"><td>Total</td><td>100,00%</td><td>' + pct(resultado.efetiva, 5) + '</td>' +
-      (entrada.rpa > 0 ? '<td>' + moeda(entrada.rpa * resultado.efetiva / 100) + '</td>' : '') + '</tr>';
     html += '</tbody></table>';
 
     html += '<p class="rodape-nota"><strong>Partilha:</strong> os percentuais vêm da tabela do ' + esc(resultado.anexoNome) + '. Eles mostram como a alíquota efetiva se distribui entre os tributos.</p>';
