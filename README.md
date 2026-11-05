@@ -1,7 +1,7 @@
 # Alíquota Simples
 
 Calculadora estática de alíquotas do Simples Nacional para a emissão de NFS-e.
-Mostra, por atividade, quatro números lado a lado:
+Mostra, por atividade, três números lado a lado:
 
 - **alíquota nominal** (cartão principal, com botão de cópia) — a da faixa, que é
   o valor do campo **“Alíquota no Simples Nacional”**. O Guia do Emissor Público
@@ -11,9 +11,7 @@ Mostra, por atividade, quatro números lado a lado:
   aplicada sobre a alíquota efetiva: `efetiva × % do ISS na partilha`. No Anexo IV
   o ISS é pago fora do DAS; nos Anexos III e V, dentro;
 - **alíquota efetiva** — `(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12`
-  (art. 18, §1º-A da LC 123/2006), a carga real do período, para conferir o DAS;
-- **DAS pago** — o que o extrato efetivamente cobrou, já sem ICMS ST, monofásico e
-  ISS retido.
+  (art. 18, §1º-A da LC 123/2006), a carga real do período.
 
 O art. 9º do Decreto 8.264/2014 também manda somar ao percentual uma estimativa de
 IPI, substituição tributária e incidência monofásica eventualmente embutida no
@@ -85,8 +83,8 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
   monofásico embutido no preço — o art. 9º do Decreto 8.264/2014 manda somar esse
   adicional, e a ferramenta não o estima.
 - A alíquota efetiva é a carga do anexo, antes de exclusões de ICMS ST,
-  monofásico e retenção de ISS. A coluna “DAS pago” mostra o valor depois dessas
-  exclusões, calculado a partir do extrato.
+  monofásico e retenção de ISS; o relatório não calcula o DAS efetivamente
+  cobrado.
 - O ISS efetivo segue a partilha da faixa do anexo escolhido. No Anexo IV ele é
   recolhido fora do DAS; se o extrato indicar ISS retido, o valor não entra no DAS
   daquela atividade.

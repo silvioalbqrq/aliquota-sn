@@ -153,31 +153,8 @@
     return /revenda de mercadorias|com[ée]rcio|industrializa|ind[uú]stria/i.test(descricao || '');
   }
 
-  function temST(descricao) {
-    var d = String(descricao || '');
-    return /substitui[cç][aã]o tribut[aá]ria/i.test(d) && !/reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/i.test(d);
-  }
-
-  function temMonofasico(descricao) {
-    return /monof[aá]sica/i.test(descricao || '');
-  }
-
   function issRetido(descricao) {
     return /com reten[cç][aã]o[\s\/]*substitui[cç][aã]o tribut[aá]ria de iss/i.test(descricao || '');
-  }
-
-  /* Tributos que o PGDAS tira da base do DAS (ST, monofásico e ISS retido).
-     O restante da alíquota do anexo é o que aparece como DAS. */
-  function foraDoDAS(descricao, resultado) {
-    var chaves = [];
-    if (temST(descricao)) chaves.push('ICMS');
-    if (temMonofasico(descricao)) chaves.push('PIS', 'COFINS');
-    if (issRetido(descricao)) chaves.push('ISS');
-    var total = 0;
-    if (resultado && !resultado.erro) {
-      chaves.forEach(function (chave) { total += resultado.aliquotasTributos[chave] || 0; });
-    }
-    return { chaves: chaves, total: total };
   }
 
   /* Último PA cujo DAS já venceu (dia 20 do mês seguinte). */
@@ -282,7 +259,7 @@
     }
 
     html += '<div class="section-mini">';
-    html +=   '<div><h3>Alíquota por atividade</h3><p>O valor do campo, a efetiva e o DAS cobrado, lado a lado.</p></div>';
+    html +=   '<div><h3>Alíquota por atividade</h3><p>A alíquota do campo, o ISS efetivo e a carga total, lado a lado.</p></div>';
     if (d.ano >= 2027) {
       html += '<label class="toggle-hibrido"><input type="checkbox" id="hibrido-pdf"' + (estado.hibridoPDF ? ' checked' : '') + '> Simples híbrido</label>';
     }
@@ -312,10 +289,6 @@
       }
 
       var descricao = atividade.descricao || '';
-      var dasPct = (atividade.receita != null && atividade.totalDAS != null && atividade.receita > 0)
-        ? (atividade.totalDAS / atividade.receita) * 100
-        : null;
-      var fora = (resultado && !resultado.erro) ? foraDoDAS(descricao, resultado) : null;
 
       var dadosAtividade = [];
       if (atividade.receita != null) dadosAtividade.push('Receita ' + moeda(atividade.receita));
@@ -349,7 +322,6 @@
         } else {
           complemento = resultado.anexoNome + ' · ' + resultado.faixa + 'ª faixa';
         }
-        var confere = dasPct != null && Math.abs((resultado.efetiva - fora.total) - dasPct) <= 0.001;
 
         if (ehMercadoria(descricao)) {
           html += '<div class="ativ-rate nominal-rate is-neutral">' +
@@ -388,17 +360,10 @@
           '<span>' + esc(complemento) + '</span>' +
           '<button class="link-copy" data-copiar="' + num(resultado.efetiva, 5) + '">copiar</button>' +
           '</div>';
-
-        html += '<div class="ativ-rate das-rate">' +
-          '<span class="rate-cap">DAS pago</span>' +
-          '<strong>' + (dasPct != null ? pct(dasPct, 5) : '—') + '</strong>' +
-          (confere ? '<span class="das-check">✓ confere</span>' : '') +
-          '</div>';
       } else {
         html += '<div class="ativ-rate is-empty"><span class="rate-cap">Portal</span><strong>—</strong><span>selecione o anexo</span></div>';
         html += '<div class="ativ-rate is-empty"><span class="rate-cap">ISS efetivo</span><strong>—</strong></div>';
         html += '<div class="ativ-rate is-empty"><span class="rate-cap">Efetiva</span><strong>—</strong></div>';
-        html += '<div class="ativ-rate is-empty"><span class="rate-cap">DAS pago</span><strong>—</strong></div>';
       }
 
       html +=   '</div>';
@@ -409,7 +374,7 @@
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie o cartão verde (nominal) para o Portal Contribuinte. O <strong>ISS efetivo</strong> é a fatia do ISS na partilha do anexo, calculada sobre a RBT12. A <strong>efetiva</strong> confere o DAS; <strong>DAS pago</strong> é o valor cobrado, já sem ST, monofásico e ISS retido.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie o cartão verde (nominal) para o Portal Contribuinte. O <strong>ISS efetivo</strong> é a fatia do ISS na partilha do anexo, calculada sobre a RBT12; no Anexo IV ele é pago fora do DAS. A <strong>efetiva</strong> é a carga total do período.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';

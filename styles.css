@@ -333,7 +333,7 @@ button, input, select { font: inherit; color: inherit; }
 }
 .ativ-anexo:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 .ativ-rates {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px; margin-top: 5px;
 }
 .ativ-rate {
@@ -363,7 +363,6 @@ button, input, select { font: inherit; color: inherit; }
 .iss-rate.is-neutral { background: #f7fafd; border-color: var(--line); }
 .iss-rate.is-neutral strong { color: #b6c2d2; font-size: 1.08rem; }
 .iss-rate.is-neutral .rate-cap { color: var(--muted); }
-.das-rate strong { color: #067a54; }
 .btn-portal {
   display: block; width: 100%; margin-top: 4px;
   background: #067a54; color: #fff; border: 0; border-radius: 6px;
@@ -373,7 +372,6 @@ button, input, select { font: inherit; color: inherit; }
 .btn-portal:hover { background: #045c3f; }
 .btn-portal.is-copied { background: #045c3f; }
 .efetiva-rate strong { color: var(--navy); }
-.das-check { font-size: .6rem !important; font-weight: 700; color: #067a54 !important; margin-top: 2px !important; }
 .link-copy {
   background: none; border: 0; padding: 0; margin-top: 4px;
   font-size: .62rem; font-weight: 700; color: #067a54;
@@ -582,6 +580,7 @@ button, input, select { font: inherit; color: inherit; }
   .ativ-main { flex: 1 1 100%; }
   .ativ-anexo { flex: 1 1 130px; width: auto; }
   .ativ-rates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ativ-rates .ativ-rate:last-child { grid-column: 1 / -1; }
   .ativ-rate .rate-cap { font-size: .46rem; letter-spacing: .04em; white-space: normal; line-height: 1.15; min-height: 2.3em; }
   .ativ-rate strong { font-size: 1.15rem; }
   .nominal-rate strong, .iss-rate strong { font-size: 1.35rem; }
@@ -625,7 +624,8 @@ button, input, select { font: inherit; color: inherit; }
   .ativ { padding: 4px 2px; }
   .ativ-top { flex-wrap: nowrap; gap: 10px; }
   .ativ-main { flex: 1 1 auto; }
-  .ativ-rates { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-top: 4px; }
+  .ativ-rates { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 4px; }
+  .ativ-rates .ativ-rate:last-child { grid-column: auto; }
   .ativ-desc { font-size: .74rem; }
   .ativ-meta { font-size: .64rem; margin-top: 0; }
   .ativ-anexo { flex: 0 0 116px; width: 116px; height: 22px; font-size: .64rem; padding: 0 2px; -webkit-appearance: none; appearance: none; text-align: center; }
