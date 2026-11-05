@@ -133,6 +133,24 @@
       fatorAnexo = mFator[2].toUpperCase();
     }
 
+    var mGeracao = texto.match(/Gerado\s*em\s*(\d{2}\/\d{2}\/\d{4})/i);
+    var dataGeracao = mGeracao ? mGeracao[1] : null;
+
+    var mApuracao = texto.match(/Apurado\s*em\s*(\d{2}\/\d{2}\/\d{4})/i);
+    var dataApuracao = mApuracao ? mApuracao[1] : null;
+
+    var mVersao = texto.match(/PGDAS-D\s+(\d{4})\s+Versão\s+([\d.]+)/i);
+    var versaoPGDAS = mVersao ? mVersao[1] + '.' + mVersao[2] : null;
+
+    var mNumeroDAS = texto.match(/Número:\s*([\d]+)/i);
+    var numeroDAS = mNumeroDAS ? mNumeroDAS[1] : null;
+
+    var mVencimento = texto.match(/Data de Vencimento:\s*(\d{2}\/\d{2}\/\d{4})/i);
+    var vencimentoDAS = mVencimento ? mVencimento[1] : null;
+
+    var mDasPrincipal = texto.match(/Principal\s*\n\s*([\d.]+,\d{2})/i);
+    var dasPrincipal = mDasPrincipal ? numero(mDasPrincipal[1]) : null;
+
     var blocos = texto.split(/Valor do D[ée]bito por Tributo para a Atividade\s*\(R\$\)\s*:/i);
     blocos.shift();
 
@@ -176,6 +194,12 @@
       cnpj: cnpj,
       nome: nome,
       dataAbertura: dataAbertura,
+      dataGeracao: dataGeracao,
+      dataApuracao: dataApuracao,
+      versaoPGDAS: versaoPGDAS,
+      numeroDAS: numeroDAS,
+      vencimentoDAS: vencimentoDAS,
+      dasPrincipal: dasPrincipal,
       mes: mes,
       ano: ano,
       pa: mes && ano ? (mes < 10 ? '0' + mes : mes) + '/' + ano : null,

@@ -6,6 +6,7 @@
     dados: null,
     anexos: {},
     hibridoPDF: false,
+    completoPDF: false,
     ultimoManual: null
   };
 
@@ -229,6 +230,24 @@
 
   /* ---------- resultado do PDF ---------- */
 
+  function renderDetalhesCompletos(d) {
+    var html = '';
+    html += '<div class="detalhes-completos">';
+    html +=   '<h3>Detalhes do extrato</h3>';
+    html +=   '<div class="meta-grid">';
+    html +=     meta('Data de abertura', esc(d.dataAbertura || '—'), 'CNPJ ' + esc(d.cnpj || '—'));
+    html +=     meta('Período de apuração', esc(d.pa || '—'), 'Regime de competência');
+    if (d.dataGeracao) html += meta('Gerado em', esc(d.dataGeracao), '');
+    if (d.dataApuracao) html += meta('Apurado em', esc(d.dataApuracao), '');
+    if (d.versaoPGDAS) html += meta('Versão PGDAS-D', esc(d.versaoPGDAS), '');
+    if (d.numeroDAS) html += meta('Número do DAS', esc(d.numeroDAS), '');
+    if (d.vencimentoDAS) html += meta('Vencimento do DAS', esc(d.vencimentoDAS), '');
+    if (d.dasPrincipal != null) html += meta('DAS principal', moeda(d.dasPrincipal), '');
+    html +=   '</div>';
+    html += '</div>';
+    return html;
+  }
+
   function renderPDF() {
     var d = estado.dados;
     if (!d) { renderVazio('Importe o extrato do PGDAS-D para começar.', 'O PDF é lido no seu navegador e não sai do computador.'); return; }
@@ -286,12 +305,17 @@
     if (d.ano >= 2027) {
       html += '<label class="toggle-hibrido"><input type="checkbox" id="hibrido-pdf"' + (estado.hibridoPDF ? ' checked' : '') + '> Simples híbrido</label>';
     }
+    html += '<label class="toggle-completo"><input type="checkbox" id="completo-pdf"' + (estado.completoPDF ? ' checked' : '') + '> Relatório completo</label>';
     html += '</div>';
 
     html += '<div class="destaque-portal">' + ICONE_ALERTA_CIRC +
       '<div><strong>Copie o cartão verde para o campo “Alíquota no Simples Nacional”.</strong> ' +
       'É a alíquota nominal (Guia do Emissor, p. 82 e 84; art. 9º do Decreto 8.264/2014). ' +
       'O cartão azul é a alíquota efetiva do ISS; a efetiva geral serve só para conferir o DAS.</div></div>';
+
+    if (estado.completoPDF) {
+      html += renderDetalhesCompletos(d);
+    }
 
     d.atividades.forEach(function (atividade, i) {
       var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
@@ -772,6 +796,10 @@
       }
       if (evento.target.id === 'hibrido-pdf') {
         estado.hibridoPDF = evento.target.checked;
+        renderPDF();
+      }
+      if (evento.target.id === 'completo-pdf') {
+        estado.completoPDF = evento.target.checked;
         renderPDF();
       }
     });
