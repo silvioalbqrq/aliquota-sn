@@ -327,18 +327,20 @@ button, input, select { font: inherit; color: inherit; }
 .toggle-completo input { width: 15px; height: 15px; accent-color: var(--blue); }
 
 .detalhes-completos {
-  border: 1px solid var(--line); border-radius: 10px;
-  background: #fff; padding: 8px 10px; margin: 8px 0;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fbfdff; padding: 5px 8px 6px; margin: 6px 0;
 }
 .detalhes-completos h3 {
-  font-size: .8rem; text-transform: uppercase; letter-spacing: .06em;
-  color: #1e3a8a; margin: 0 0 6px; padding-bottom: 4px;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .06em;
+  color: #1e3a8a; margin: 0 0 3px; padding-bottom: 3px;
   border-bottom: 1px solid var(--line);
 }
-.detalhes-completos .meta-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
-.detalhes-completos .meta { font-size: .74rem; }
-.detalhes-completos .meta span { display: block; font-size: .62rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
-.detalhes-completos .meta strong { display: block; font-size: .82rem; color: var(--ink); font-weight: 700; }
+.detalhes-linha { font-size: .68rem; color: var(--ink); margin: 0; line-height: 1.55; }
+.detalhes-linha span + span::before { content: '·'; color: #b8c6d8; margin: 0 5px 0 2px; }
+.detalhes-linha b {
+  font-size: .56rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); margin-right: 2px;
+}
 
 /* Activities */
 .ativ { padding: 8px 4px; border-bottom: 1px solid #edf2f8; }
@@ -698,6 +700,9 @@ button, input, select { font: inherit; color: inherit; }
 
   .destaque-portal { margin-top: 5px; padding: 5px 8px; font-size: .72rem; }
   .destaque-portal strong { font-size: .78rem; }
+  .detalhes-completos { margin: 4px 0; padding: 3px 6px 4px; }
+  .detalhes-completos h3 { font-size: .55rem; margin-bottom: 2px; padding-bottom: 2px; }
+  .detalhes-linha { font-size: .6rem; line-height: 1.4; }
   .hibrido-info, .alerta { margin-top: 4px; padding: 4px 8px; font-size: .72rem; }
   .tributos-card { margin: 6px 0 1px; padding: 5px 7px 6px; font-size: .68rem; }
   .tributos-head { gap: 6px; }

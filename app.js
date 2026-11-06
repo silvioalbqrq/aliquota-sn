@@ -253,21 +253,19 @@
   }
 
   function renderDetalhesCompletos(d) {
-    var html = '';
-    html += '<div class="detalhes-completos">';
-    html +=   '<h3>Detalhes do extrato</h3>';
-    html +=   '<div class="meta-grid">';
-    html +=     meta('Data de abertura', esc(d.dataAbertura || '—'), 'CNPJ ' + esc(d.cnpj || '—'));
-    html +=     meta('Período de apuração', esc(d.pa || '—'), 'Regime de competência');
-    if (d.dataGeracao) html += meta('Gerado em', esc(d.dataGeracao), '');
-    if (d.dataApuracao) html += meta('Apurado em', esc(d.dataApuracao), '');
-    if (d.versaoPGDAS) html += meta('Versão PGDAS-D', esc(d.versaoPGDAS), '');
-    if (d.numeroDAS) html += meta('Número do DAS', esc(d.numeroDAS), '');
-    if (d.vencimentoDAS) html += meta('Vencimento do DAS', esc(d.vencimentoDAS), '');
-    if (d.dasPrincipal != null) html += meta('DAS principal', moeda(d.dasPrincipal), '');
-    html +=   '</div>';
-    html += '</div>';
-    return html;
+    function item(rotulo, valor) {
+      return valor ? '<span><b>' + rotulo + '</b> ' + esc(valor) + '</span>' : '';
+    }
+    var linha1 = item('CNPJ', d.cnpj) + item('Abertura', d.dataAbertura) +
+      item('Gerado', d.dataGeracao) + item('Apurado', d.dataApuracao);
+    var linha2 = item('DAS', d.numeroDAS) + item('Vencimento', d.vencimentoDAS) +
+      item('Principal', d.dasPrincipal != null ? moeda(d.dasPrincipal) : '') + item('PGDAS-D', d.versaoPGDAS);
+    if (!linha1 && !linha2) return '';
+    return '<div class="detalhes-completos">' +
+      '<h3>Detalhes do extrato</h3>' +
+      (linha1 ? '<p class="detalhes-linha">' + linha1 + '</p>' : '') +
+      (linha2 ? '<p class="detalhes-linha">' + linha2 + '</p>' : '') +
+      '</div>';
   }
 
   function renderPDF() {
