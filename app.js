@@ -241,10 +241,10 @@
     var html = '<div class="tributos-card' + (compacto ? ' tributos-card-compacto' : '') + '">';
     html +=   '<div class="tributos-head"><strong>Tributos do Anexo ' + esc(resultado.anexo) + ' — ' +
               num(resultado.faixa, 0) + 'ª faixa</strong>' +
-              '<span>conferência · não sai na impressão</span></div>';
-    html +=   '<div class="tributos-scroll"><table class="partilha">';
+              '<span>conferência' + (compacto ? '' : ' · não sai na impressão') + '</span></div>';
+    html +=   '<div class="tributos-scroll">';
     html += tabelaPartilhaHTML(resultado, temValor, receitaAtividade, 'Valor (R$)', foraFn);
-    html +=   '</tbody></table></div>';
+    html +=   '</div>';
     html +=   '<p class="tributos-nota' + (compacto ? ' tributos-nota-compacto' : '') + '">Alíquota = efetiva × partilha. Valor = receita da atividade no PA × alíquota.' +
               (resultado.anexo === 'IV' ? ' No Anexo IV, o ISS é recolhido fora do DAS.' : '') +
               (issRetido(descricao) ? ' ISS retido: não entra no DAS desta atividade.' : '') + '</p>';
@@ -524,7 +524,6 @@
     html += tabelaPartilhaHTML(resultado, entrada.rpa > 0, entrada.rpa, 'Valor estimado', function (chave) {
       return resultado.hibrido && (chave === 'CBS' || chave === 'IBS');
     });
-    html += '</tbody></table>';
 
     html += '<p class="rodape-nota"><strong>Partilha:</strong> os percentuais vêm da tabela do ' + esc(resultado.anexoNome) + '. Eles mostram como a alíquota efetiva se distribui entre os tributos.</p>';
 

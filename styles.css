@@ -542,7 +542,9 @@ button, input, select { font: inherit; color: inherit; }
 .rodape-nota strong { color: var(--navy); }
 
 @media print {
-  .tributos-card { display: none !important; }
+  /* O card compacto só existe no relatório completo, então ele pode sair na impressão. */
+  .tributos-card:not(.tributos-card-compacto) { display: none !important; }
+  .tributos-scroll { overflow: visible; }
   @page { margin: 10mm; }
 }
 
