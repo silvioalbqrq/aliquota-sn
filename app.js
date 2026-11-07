@@ -78,43 +78,6 @@
     return num(valor, casas) + '%';
   }
 
-  function mesesDeAtividade(dataAbertura, anoPA, mesPA) {
-    if (!dataAbertura || !anoPA || !mesPA) return null;
-    var partes = dataAbertura.split('/');
-    if (partes.length !== 3) return null;
-    var anoAbertura = Number(partes[2]);
-    var mesAbertura = Number(partes[1]);
-    var meses = (Number(anoPA) - anoAbertura) * 12 + Number(mesPA) - mesAbertura + 1;
-    return meses > 0 ? meses : null;
-  }
-
-  function baseDoExtrato(d) {
-    var mesAtividade = mesesDeAtividade(d.dataAbertura, d.ano, d.mes);
-    if (!mesAtividade) return { rbt12: d.rbt12, rbt12p: d.rbt12p };
-
-    if (d.ano <= 2026 && mesAtividade <= 12) {
-      var baseInicial2026 = Number(d.rbt12p) || (mesAtividade === 1 ? Number(d.rpa) * 12 : 0);
-      if (!(baseInicial2026 > 0)) {
-        return { erro: 'Para este mês de início de atividade, informe a RBT12p do extrato. No primeiro mês, ela pode ser calculada pela receita do PA multiplicada por 12.' };
-      }
-      return { rbt12: d.rbt12, rbt12p: baseInicial2026, usouRBT12p: true, mesAtividade: mesAtividade };
-    }
-
-    if (d.ano >= 2027 && mesAtividade <= 2) {
-      return { primeiraFaixaForcada: true, rbt12: 0, mesAtividade: mesAtividade };
-    }
-
-    if (d.ano >= 2027 && mesAtividade <= 13) {
-      var baseInicial2027 = Number(d.rbt12) || Number(d.rbt12p) || 0;
-      if (!(baseInicial2027 > 0)) {
-        return { erro: 'Não encontrei a base proporcionalizada do PGDAS-D para este mês de início de atividade.' };
-      }
-      return { rbt12: 0, rbt12p: baseInicial2027, usouRBT12p: true, mesAtividade: mesAtividade };
-    }
-
-    return { rbt12: d.rbt12, rbt12p: 0, mesAtividade: mesAtividade };
-  }
-
   function esc(texto) {
     return String(texto == null ? '' : texto).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -258,8 +221,7 @@
     }
     var linha1 = item('CNPJ', d.cnpj) + item('Abertura', d.dataAbertura) +
       item('Gerado', d.dataGeracao) + item('Apurado', d.dataApuracao);
-    var linha2 = item('DAS', d.numeroDAS) + item('Vencimento', d.vencimentoDAS) +
-      item('Principal', d.dasPrincipal != null ? moeda(d.dasPrincipal) : '') + item('PGDAS-D', d.versaoPGDAS);
+    var linha2 = item('DAS', d.numeroDAS) + item('PGDAS-D', d.versaoPGDAS);
     if (!linha1 && !linha2) return '';
     return '<div class="detalhes-completos">' +
       '<h3>Detalhes do extrato</h3>' +
@@ -276,7 +238,7 @@
       renderErro('Este extrato é de ' + d.ano + '. As tabelas de transição a partir de 2029 ainda não estão incluídas nesta versão.');
       return;
     }
-    var dadosBase = baseDoExtrato(d);
+    var dadosBase = TABELAS.baseDoExtrato(d);
     if (dadosBase.erro) { renderErro(dadosBase.erro); return; }
     if (!dadosBase.primeiraFaixaForcada && (!dadosBase.rbt12 && !dadosBase.rbt12p)) {
       renderErro('Não encontrei RBT12 ou RBT12p no extrato. Verifique o PDF ou informe os dados manualmente.');
@@ -543,6 +505,24 @@
 
   /* ---------- leitura do PDF ---------- */
 
+  var pdfjsCarregando = null;
+
+  function carregarPDFJS() {
+    if (typeof pdfjsLib !== 'undefined') return Promise.resolve();
+    if (pdfjsCarregando) return pdfjsCarregando;
+    pdfjsCarregando = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = 'pdf.min.js?v=6';
+      script.onload = resolve;
+      script.onerror = function () {
+        pdfjsCarregando = null;
+        reject(new Error('Falha ao carregar o leitor de PDF.'));
+      };
+      document.head.appendChild(script);
+    });
+    return pdfjsCarregando;
+  }
+
   async function processarArquivo(arquivo) {
     if (!arquivo) return;
     if (!/\.pdf$/i.test(arquivo.name) && arquivo.type !== 'application/pdf') {
@@ -559,6 +539,7 @@
     renderCarregando(arquivo.name);
 
     try {
+      await carregarPDFJS();
       var texto = await PGDAS.extrairPDF(arquivo);
       var dados = PGDAS.parseTexto(texto);
 
@@ -826,6 +807,7 @@
         estado.dados = null;
         estado.anexos = {};
         estado.hibridoPDF = false;
+        estado.completoPDF = false;
         renderVazio('Importe o extrato do PGDAS-D para começar.', 'O PDF é lido no seu navegador e não sai do computador.');
       } else if (nome === 'limpar-manual') {
         estado.ultimoManual = null;

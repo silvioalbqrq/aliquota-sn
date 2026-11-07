@@ -23,7 +23,7 @@ estima o adicional.
 Não há build nem backend. Basta servir a pasta como arquivos estáticos:
 
 ```bash
-cd simples-aliquota-site
+cd aliquota-sn
 python -m http.server 8765
 ```
 
@@ -48,8 +48,8 @@ worker; por isso o servidor local é o caminho recomendado.
 - A alíquota efetiva do ISS aparece em cartão azul, com o mesmo destaque, calculada
   pela partilha do anexo (Anexos III, IV e V). Anexos I e II não têm ISS e mostram
   o cartão neutro.
-- Confere o DAS calculado contra o DAS do extrato (marca “✓ confere”) e avisa
-  quando o extrato importado está de um PA anterior ao último disponível.
+- Exibe o DAS total de cada atividade no extrato, sem comparar com o cálculo, e
+  avisa quando o extrato importado é de um PA anterior ao último disponível.
 - Exibe a memória de cálculo e a partilha por tributo. Na 5ª faixa do Anexo III,
   limita o ISS efetivo a 5% e redistribui a diferença entre os demais tributos.
 - Botões para copiar a alíquota nominal (valor do campo, ex.: `13,50`) e a
@@ -60,7 +60,7 @@ worker; por isso o servidor local é o caminho recomendado.
 | Período de apuração | Tabela |
 | --- | --- |
 | Até 2026 | LC 123/2006, Anexos I a V |
-| 2027 e 2028 | Resolução CGSN 190/2026, com CBS e IBS na partilha |
+| 2027 e 2028 | LC 214/2025, com CBS e IBS na partilha |
 | 2029 em diante | Ainda não incluído — a ferramenta mostra um aviso |
 
 Em 2027–2028, o modo **Simples híbrido** separa a parcela que permanece no DAS
@@ -99,8 +99,10 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
 node teste.js
 ```
 
-Os testes cobrem os extratos de exemplo disponíveis, a integridade das tabelas (partilha
-somando 100%), início de atividade, teto de ISS no Anexo III, Simples híbrido e limites de faixa.
+Os testes cobrem os extratos de exemplo em `test-data/` (anonimizados), a
+integridade das tabelas (partilha somando 100%), início de atividade, teto de ISS
+no Anexo III, Simples híbrido e limites de faixa. Se um extrato de exemplo faltar,
+o teste falha em vez de pular.
 
 ## Arquivos
 
@@ -112,4 +114,5 @@ somando 100%), início de atividade, teto de ISS no Anexo III, Simples híbrido 
 | `parser.js` | Leitura do texto do PDF e extração dos dados |
 | `tabelas.js` | Tabelas 2026/2027–2028 e motor de cálculo |
 | `teste.js` | Testes de regressão |
-| `pdf.min.js`, `pdf.worker.min.js` | PDF.js |
+| `test-data/` | Extratos de exemplo anonimizados usados nos testes |
+| `pdf.min.js`, `pdf.worker.min.js` | PDF.js, carregado só ao importar um PDF |

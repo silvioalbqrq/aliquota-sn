@@ -1,0 +1,383 @@
+Extrato do Simples Nacional
+Gerado em 03/11/2026 16:26:48
+Apurado em 01/10/2026 14:53:10
+Apuração Original
+PGDAS-D 2018 Versão 2.2.30
+1) Informações do Contribuinte
+CNPJ Básico: 00.000.000
+Nome Empresarial: EMPRESA TESTE IV LTDA
+Data de Abertura: 12/01/2000
+Regime de Apuração: Competência
+Optante pelo Simples Nacional: Sim
+2) Informações da Apuração 00000000202609001
+Período de Apuração (PA): 09/2026
+2.1 Discriminativo de Receitas
+Total de Receitas Brutas (R$)
+Mercado Interno
+Mercado Externo
+Total
+Receita Bruta do PA (RPA) - Competência
+20.150,00
+0,00
+20.150,00
+Receita bruta acumulada nos doze meses anteriores ao PA
+(RBT12)
+228.201,99
+0,00
+228.201,99
+Receita bruta acumulada nos doze meses anteriores ao PA
+proporcionalizada (RBT12p)
+Receita bruta acumulada no ano-calendário corrente (RBA)
+181.851,99
+0,00
+181.851,99
+Receita bruta acumulada no ano-calendário anterior
+(RBAA)
+200.834,88
+0,00
+200.834,88
+Limite de receita bruta proporcionalizado
+4.800.000,00
+4.800.000,00
+.
+.
+2.2) Receitas Brutas Anteriores (R$)
+2.2.1) Mercado Interno
+01/2025
+13.272,50
+02/2025
+21.047,00
+03/2025
+13.940,00
+04/2025
+9.637,00
+05/2025
+18.756,20
+06/2025
+20.002,18
+07/2025
+18.830,00
+08/2025
+18.850,00
+09/2025
+21.255,00
+10/2025
+23.125,00
+11/2025
+12.380,00
+12/2025
+9.740,00
+01/2026
+16.973,99
+02/2026
+17.179,00
+03/2026
+20.920,00
+04/2026
+22.375,00
+05/2026
+18.859,00
+06/2026
+21.750,00
+07/2026
+23.200,00
+08/2026
+20.445,00
+2.2.2) Mercado Externo
+01/2025
+0,00
+02/2025
+0,00
+03/2025
+0,00
+04/2025
+0,00
+05/2025
+0,00
+06/2025
+0,00
+07/2025
+0,00
+08/2025
+0,00
+09/2025
+0,00
+10/2025
+0,00
+11/2025
+0,00
+12/2025
+0,00
+01/2026
+0,00
+02/2026
+0,00
+03/2026
+0,00
+04/2026
+0,00
+05/2026
+0,00
+06/2026
+0,00
+07/2026
+0,00
+08/2026
+0,00
+.
+.
+2.3) Folha de Salários Anteriores (R$)
+Nenhuma
+.
+.
+2.4) Fator r
+Fator r = Não se aplica
+.
+.
+2.5) Valores Fixos
+Não se aplica
+.
+.
+3) Informações dos Estabelecimentos - valores referentes às Receitas Informadas
+CNPJ Estabelecimento: 00.000.000/0001-00
+Município: MUNICIPIO TESTE
+UF: CE
+                                                                                      Página 1
+Sublimite de Receita Anual (R$): 3.600.000,00
+Impedido de recolher ICMS/ISS no DAS: Não
+.
+.
+Valor do Débito por Tributo para a Atividade (R$):
+Prestação de Serviços, exceto para o exterior - Sujeitos ao Anexo IV, sem retenção/substituição
+tributária de ISS, com ISS devido ao próprio Município do estabelecimento
+Receita Bruta Informada: R$ 17.030,00
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+183,79
+141,09
+190,75
+41,31
+0,00
+0,00
+0,00
+371,29
+928,23
+Parcela 1: R$ 17.030,00
+.
+.
+.
+.
+Valor do Débito por Tributo para a Atividade (R$):
+Prestação de Serviços, exceto para o exterior - Sujeitos ao Anexo IV, com retenção/substituição
+tributária de ISS
+Receita Bruta Informada: R$ 3.120,00
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+33,67
+25,85
+34,95
+7,57
+0,00
+0,00
+0,00
+0,00
+102,04
+Parcela 1: R$ 3.120,00
+.
+.
+Informações por Estabelecimento
+Valor Informado: 20.150,00
+Total do Débito Declarado (exigível + suspenso)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+217,46
+166,94
+225,70
+48,88
+0,00
+0,00
+0,00
+371,29
+1.030,27
+Total do Débito com Exigibilidade Suspensa (R$)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+Total do Débito Exigível (R$)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+217,46
+166,94
+225,70
+48,88
+0,00
+0,00
+0,00
+371,29
+1.030,27
+.
+.
+.
+.
+4) Total Geral da Empresa
+Total do Débito Declarado (exigível + suspenso) (R$)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+217,46
+166,94
+225,70
+48,88
+0,00
+0,00
+0,00
+371,29
+1.030,27
+Total do Débito com Exigibilidade Suspensa (R$)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+0,00
+Total do Débito Exigível (R$)
+IRPJ
+CSLL
+COFINS
+PIS/Pasep
+INSS/CPP
+ICMS
+IPI
+ISS
+Total
+217,46
+166,94
+225,70
+48,88
+0,00
+0,00
+0,00
+371,29
+1.030,27
+.
+.
+5) Este item não se aplica à primeira apuração do PA:
+.
+                                                                                      Página 2
+6) Informações sobre DAS Gerado na apuração: 00000000202609001
+Número: 07202600000000000
+Data de Vencimento:
+20/10/2026
+Data limite para acolhimento: 20/10/2026
+IRPJ
+217,46
+CSLL
+166,94
+COFINS
+225,70
+PIS/PASEP
+48,88
+INSS/CPP
+0,00
+ICMS
+0,00
+IPI
+0,00
+ISS
+371,29
+Principal
+1.030,27
+Multa
+0,00
+Juros
+0,00
+Total
+1.030,27
+6.1) Discriminação dos Valores Calculados no DAS Gerado
+Tributo
+Valor
+Ente Federativo de Destino
+IRPJ
+217,46
+União
+CSLL
+166,94
+União
+COFINS
+225,70
+União
+PIS
+48,88
+União
+ISS
+371,29
+MUNICIPIO TESTE-CE
+6.2) Informações da Arrecadação do DAS gerado nesta apuração
+Data de Pagamento
+Banco/Agência de Arrecadação
+Valor Pago
+07/10/2026
+341/1597
+1.030,27
+                                                                                      Página 3

@@ -145,12 +145,6 @@
     var mNumeroDAS = texto.match(/Número:\s*([\d]+)/i);
     var numeroDAS = mNumeroDAS ? mNumeroDAS[1] : null;
 
-    var mVencimento = texto.match(/Data de Vencimento:\s*(\d{2}\/\d{2}\/\d{4})/i);
-    var vencimentoDAS = mVencimento ? mVencimento[1] : null;
-
-    var mDasPrincipal = texto.match(/Principal\s*\n\s*([\d.]+,\d{2})/i);
-    var dasPrincipal = mDasPrincipal ? numero(mDasPrincipal[1]) : null;
-
     var blocos = texto.split(/Valor do D[ée]bito por Tributo para a Atividade\s*\(R\$\)\s*:/i);
     blocos.shift();
 
@@ -198,8 +192,6 @@
       dataApuracao: dataApuracao,
       versaoPGDAS: versaoPGDAS,
       numeroDAS: numeroDAS,
-      vencimentoDAS: vencimentoDAS,
-      dasPrincipal: dasPrincipal,
       mes: mes,
       ano: ano,
       pa: mes && ano ? (mes < 10 ? '0' + mes : mes) + '/' + ano : null,

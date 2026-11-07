@@ -7,18 +7,9 @@ const PGDAS = require('./parser.js');
 const DIR = process.env.PDFTEXT || path.join(__dirname, 'test-data');
 
 const casos = [
-  { arquivo: 'PGDASD-EXTRATO-07202628032423115.pdf.txt', pa: '09/2026', rbt12: 540220.74, anexo: 'III', taxa: 10.23, cnpj: '08.932.805/0001-85' },
-  { arquivo: 'PGDASD-EXTRATO-07202628032423115.pdf.txt', pa: '09/2026', rbt12: 540220.74, anexo: 'I', taxa: 6.93 },
-  { arquivo: 'PGDASD-EXTRATO-07202625118128397_(3).pdf.txt', pa: '08/2026', rbt12: 1682717.94, anexo: 'I', taxa: 9.36 },
-  { arquivo: 'PGDASD-EXTRATO-07202625118128397_(3).pdf.txt', pa: '08/2026', rbt12: 1682717.94, anexo: 'III', taxa: 13.88 },
-  { arquivo: 'PGDASD-EXTRATO-07202622242449383.pdf.txt', pa: '07/2026', rbt12: 1626733.97, anexo: 'I', taxa: 9.32 },
-  { arquivo: 'PGDASD-EXTRATO-07202622242449383.pdf.txt', pa: '07/2026', rbt12: 1626733.97, anexo: 'III', taxa: 13.81 },
-  { arquivo: 'PGDASD-EXTRATO-07202625903869374.pdf.txt', pa: '08/2026', rbt12: 1552672.83, anexo: 'I', taxa: 9.25 },
-  { arquivo: 'PGDASD-EXTRATO-07202626539921539.pdf.txt', pa: '08/2026', rbt12: 20179.99, base: 34594.27, anexo: 'I', taxa: 4.00 },
-  { arquivo: 'PGDASD-EXTRATO-07202500700531059.pdf.txt', pa: '12/2024', rbt12: 92386.81, anexo: 'III', taxa: 6.00, fatorR: 0.61 },
-  { arquivo: 'PGDASD-EXTRATO-07202623359956763.pdf.txt', pa: '07/2026', rbt12: 355802.78, anexo: 'III', taxa: 8.57 },
-  { arquivo: 'PGDASD-EXTRATO-07202625308242425.pdf.txt', pa: '08/2026', rbt12: 449860.07, anexo: 'III', taxa: 9.58 },
-  { arquivo: 'PGDASD-EXTRATO-07202627463085083 DEDETIZADORA.pdf.txt', pa: '09/2026', rbt12: 228201.99, anexo: 'IV', taxa: 5.45, cnpj: '03.602.402/0001-54' }
+  { arquivo: 'extrato-anexo-iv.txt', pa: '09/2026', rbt12: 228201.99, anexo: 'IV', taxa: 5.4505, cnpj: '00.000.000/0001-00' },
+  { arquivo: 'extrato-anexo-i-iii.txt', pa: '09/2026', rbt12: 654118.4, anexo: 'I', taxa: 7.3811, cnpj: '11.111.111/0001-11' },
+  { arquivo: 'extrato-anexo-i-iii.txt', pa: '09/2026', rbt12: 654118.4, anexo: 'III', taxa: 10.8032 }
 ];
 
 let falhas = 0;
@@ -41,7 +32,14 @@ const casosDisponiveis = casos.filter(function (caso) {
 });
 
 console.log('\n== Parser + cálculo nos extratos de exemplo ==');
-if (!casosDisponiveis.length) console.log('Sem PDFs de exemplo locais; testes de parser ignorados.');
+const faltando = casos.filter(function (caso) {
+  return !fs.existsSync(path.join(DIR, caso.arquivo));
+});
+if (!casosDisponiveis.length) {
+  ok(false, 'nenhum extrato de exemplo em ' + DIR + '; os testes do parser não podem ser ignorados');
+} else if (faltando.length) {
+  ok(false, 'extratos ausentes em ' + DIR + ': ' + faltando.map(function (c) { return c.arquivo; }).join(', '));
+}
 casosDisponiveis.forEach(function (caso) {
   const texto = fs.readFileSync(path.join(DIR, caso.arquivo), 'utf8');
   const dados = PGDAS.parseTexto(texto);
@@ -138,6 +136,15 @@ ok(perto(hib.fora, hib.efetiva * (16.41 + 0.19) / 100, 0.0001), 'parcela CBS+IBS
 ok(perto(hib.dentro, hib.efetiva - hib.fora, 0.0001), 'parcela no DAS = ' + hib.dentro.toFixed(4) + '%');
 
 console.log('\n== Início de atividade ==');
+const inicio2027Mes3 = TAB.baseDoExtrato({
+  dataAbertura: '10/11/2026', ano: 2027, mes: 1, rbt12: 50000, rbt12p: 300000, rpa: 9000
+});
+ok(inicio2027Mes3.rbt12p === 300000 && inicio2027Mes3.rbt12 === 0 && inicio2027Mes3.usouRBT12p,
+  '2027: meses 3 a 13 usam a RBT12p mesmo com RBT12 preenchida');
+const inicio2027Mes2 = TAB.baseDoExtrato({
+  dataAbertura: '10/12/2026', ano: 2027, mes: 1, rbt12: 50000, rbt12p: 300000, rpa: 9000
+});
+ok(inicio2027Mes2.primeiraFaixaForcada === true, '2027: meses 1 e 2 usam a primeira faixa');
 const primeira2027 = TAB.calcular({ ano: 2027, anexo: 'III', primeiraFaixaForcada: true });
 ok(!primeira2027.erro && primeira2027.faixa === 1 && perto(primeira2027.efetiva, 6, 0.0001),
   '2027: primeira faixa forçada sem RBT12 nos meses 1 e 2');

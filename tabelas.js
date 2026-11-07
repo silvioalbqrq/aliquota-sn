@@ -1,4 +1,4 @@
-/* Tabelas do Simples Nacional (LC 123/2006 e Resolução CGSN 190/2026).
+/* Tabelas do Simples Nacional (LC 123/2006 e LC 214/2025).
    Vigência até 2026 e 2027-2028. Percentuais de partilha incidem sobre a alíquota efetiva. */
 (function (root, factory) {
   var api = factory();
@@ -100,11 +100,11 @@
   };
 
   var ANEXOS = {
-    I: { nome: 'Anexo I', titulo: 'Comércio', tabelas: P26 },
-    II: { nome: 'Anexo II', titulo: 'Indústria', tabelas: P26 },
-    III: { nome: 'Anexo III', titulo: 'Serviços (locação de bens móveis e serviços do art. 25, III, ou V com Fator R ≥ 28%)', tabelas: P26 },
-    IV: { nome: 'Anexo IV', titulo: 'Serviços do art. 25, IV (construção civil, limpeza, vigilância etc.)', tabelas: P26 },
-    V: { nome: 'Anexo V', titulo: 'Serviços do art. 25, V com Fator R < 28%', tabelas: P26 }
+    I: { nome: 'Anexo I', tabelas: P26 },
+    II: { nome: 'Anexo II', tabelas: P26 },
+    III: { nome: 'Anexo III', tabelas: P26 },
+    IV: { nome: 'Anexo IV', tabelas: P26 },
+    V: { nome: 'Anexo V', tabelas: P26 }
   };
 
   function tabelasDoAno(ano) {
@@ -113,6 +113,45 @@
 
   function vigencia(ano) {
     return Number(ano) >= 2027 ? '2027–2028' : 'até 2026';
+  }
+
+  function mesesDeAtividade(dataAbertura, anoPA, mesPA) {
+    if (!dataAbertura || !anoPA || !mesPA) return null;
+    var partes = dataAbertura.split('/');
+    if (partes.length !== 3) return null;
+    var anoAbertura = Number(partes[2]);
+    var mesAbertura = Number(partes[1]);
+    var meses = (Number(anoPA) - anoAbertura) * 12 + Number(mesPA) - mesAbertura + 1;
+    return meses > 0 ? meses : null;
+  }
+
+  /* Base usada no cálculo conforme o mês de início de atividade.
+     Meses 3 a 13 de 2027–2028 usam a RBT12p informada pelo PGDAS-D. */
+  function baseDoExtrato(d) {
+    var mesAtividade = mesesDeAtividade(d.dataAbertura, d.ano, d.mes);
+    if (!mesAtividade) return { rbt12: d.rbt12, rbt12p: d.rbt12p };
+
+    if (d.ano <= 2026 && mesAtividade <= 12) {
+      var baseInicial2026 = Number(d.rbt12p) || (mesAtividade === 1 ? Number(d.rpa) * 12 : 0);
+      if (!(baseInicial2026 > 0)) {
+        return { erro: 'Para este mês de início de atividade, informe a RBT12p do extrato. No primeiro mês, ela pode ser calculada pela receita do PA multiplicada por 12.' };
+      }
+      return { rbt12: d.rbt12, rbt12p: baseInicial2026, usouRBT12p: true, mesAtividade: mesAtividade };
+    }
+
+    if (d.ano >= 2027 && mesAtividade <= 2) {
+      return { primeiraFaixaForcada: true, rbt12: 0, mesAtividade: mesAtividade };
+    }
+
+    if (d.ano >= 2027 && mesAtividade <= 13) {
+      var baseInicial2027 = Number(d.rbt12p) || Number(d.rbt12) || 0;
+      if (!(baseInicial2027 > 0)) {
+        return { erro: 'Não encontrei a base proporcionalizada do PGDAS-D para este mês de início de atividade.' };
+      }
+      return { rbt12: 0, rbt12p: baseInicial2027, usouRBT12p: true, mesAtividade: mesAtividade };
+    }
+
+    return { rbt12: d.rbt12, rbt12p: 0, mesAtividade: mesAtividade };
   }
 
   function rbt12pDaMedia(receitas) {
@@ -186,8 +225,6 @@
       partilha[tributo] = efetiva > 0 ? aliquotasTributos[tributo] / efetiva * 100 : 0;
     });
 
-    var cbs = partilha.CBS || 0;
-    var ibs = partilha.IBS || 0;
     var hibrido = !!opcoes.hibrido && ano >= 2027;
     var fora = hibrido ? (aliquotasTributos.CBS || 0) + (aliquotasTributos.IBS || 0) : 0;
 
@@ -196,7 +233,6 @@
       vigencia: vigencia(ano),
       anexo: anexo,
       anexoNome: ANEXOS[anexo].nome,
-      anexoTitulo: ANEXOS[anexo].titulo,
       base: primeiraFaixaForcada ? null : base,
       usouRBT12p: !!opcoes.usouRBT12p || rbt12p > 0,
       primeiraFaixaForcada: primeiraFaixaForcada,
@@ -206,12 +242,9 @@
       efetiva: efetiva,
       partilha: partilha,
       aliquotasTributos: aliquotasTributos,
-      cbs: cbs,
-      ibs: ibs,
       hibrido: hibrido,
       fora: fora,
-      dentro: efetiva - fora,
-      sublimite: base > 3600000
+      dentro: efetiva - fora
     };
   }
 
@@ -219,6 +252,7 @@
     FAIXAS: FAIXAS,
     ANEXOS: ANEXOS,
     calcular: calcular,
+    baseDoExtrato: baseDoExtrato,
     rbt12pDaMedia: rbt12pDaMedia,
     tabelasDoAno: tabelasDoAno
   };
