@@ -9,7 +9,7 @@ Mostra, por atividade, três números lado a lado:
   a qual está sujeita”, com base no art. 9º do Decreto 8.264/2014;
 - **ISS efetivo** — a fatia do ISS na partilha do anexo (Anexos III, IV e V),
   aplicada sobre a alíquota efetiva: `efetiva × % do ISS na partilha`. No Anexo IV
-  o ISS é pago fora do DAS; nos Anexos III e V, dentro;
+  o ISS é pago fora do DAS, junto com o INSS/CPP; nos Anexos III e V, dentro;
 - **alíquota efetiva** — `(RBT12 × alíquota nominal − parcela a deduzir) ÷ RBT12`
   (art. 18, §1º-A da LC 123/2006), a carga real do período.
 
@@ -54,6 +54,11 @@ worker; por isso o servidor local é o caminho recomendado.
   limita o ISS efetivo a 5% e redistribui a diferença entre os demais tributos.
 - Botões para copiar a alíquota nominal (valor do campo, ex.: `13,50`) e a
   efetiva (ex.: `10,23467`), já formatadas.
+- **Simulação de serviço:** quando o extrato importado não tem nenhuma atividade
+  nos Anexos III, IV ou V, mostra nominal, ISS efetivo e efetiva desses três
+  anexos sobre a mesma base, para o caso de a empresa passar a emitir NFS-e.
+- **Impressão:** o título do documento vira `Relatório compacto - DD-MM-AAAA` ou
+  `Relatório completo - DD-MM-AAAA`, que é o nome sugerido ao salvar em PDF.
 
 ## Períodos suportados
 
@@ -86,8 +91,8 @@ a média e anualizá-la. Para o primeiro mês de 2026, a receita do PA é anuali
   monofásico e retenção de ISS; o relatório não calcula o DAS efetivamente
   cobrado.
 - O ISS efetivo segue a partilha da faixa do anexo escolhido. No Anexo IV ele é
-  recolhido fora do DAS; se o extrato indicar ISS retido, o valor não entra no DAS
-  daquela atividade.
+  recolhido fora do DAS, assim como o INSS/CPP; se o extrato indicar ISS retido,
+  o valor não entra no DAS daquela atividade.
 - As alíquotas mudam a cada apuração, porque a RBT12 muda. Reimporte o extrato
   do PA mais recente antes de emitir.
 - Ferramenta de apoio. Não substitui o extrato oficial nem a orientação de um

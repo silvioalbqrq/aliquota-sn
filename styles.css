@@ -342,6 +342,27 @@ button, input, select { font: inherit; color: inherit; }
   color: var(--muted); margin-right: 2px;
 }
 
+.servico-sim {
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fbfdff; padding: 6px 9px 7px; margin: 8px 0;
+}
+.servico-sim-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.servico-sim-head strong {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .05em; color: #1e3a8a;
+}
+.servico-sim-head span { font-size: .6rem; color: var(--muted); }
+.servico-sim-tabela { width: 100%; border-collapse: collapse; font-size: .7rem; }
+.servico-sim-tabela th {
+  text-align: left; font-size: .54rem; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--muted); padding: 3px 4px; border-bottom: 1px solid var(--line);
+}
+.servico-sim-tabela td {
+  padding: 3px 4px; border-bottom: 1px solid #edf2f8; font-variant-numeric: tabular-nums;
+}
+.servico-sim-tabela tr:last-child td { border-bottom: 0; }
+.servico-sim-tabela td:first-child { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.servico-sim-nota { font-size: .6rem; color: var(--muted); margin: 4px 0 0; line-height: 1.4; }
+
 /* Activities */
 .ativ { padding: 8px 4px; border-bottom: 1px solid #edf2f8; }
 .ativ:last-child { border-bottom: 0; }
@@ -703,6 +724,13 @@ button, input, select { font: inherit; color: inherit; }
   .detalhes-completos { margin: 4px 0; padding: 3px 6px 4px; }
   .detalhes-completos h3 { font-size: .55rem; margin-bottom: 2px; padding-bottom: 2px; }
   .detalhes-linha { font-size: .6rem; line-height: 1.4; }
+  .servico-sim { margin: 5px 0 2px; padding: 4px 6px 5px; page-break-inside: avoid; }
+  .servico-sim-head strong { font-size: .56rem; }
+  .servico-sim-head span { font-size: .5rem; }
+  .servico-sim-tabela { font-size: .62rem; }
+  .servico-sim-tabela th { font-size: .48rem; padding: 2px 3px; }
+  .servico-sim-tabela td { padding: 2px 3px; }
+  .servico-sim-nota { font-size: .52rem; }
   .hibrido-info, .alerta { margin-top: 4px; padding: 4px 8px; font-size: .72rem; }
   .tributos-card { margin: 6px 0 1px; padding: 5px 7px 6px; font-size: .68rem; }
   .tributos-head { gap: 6px; }

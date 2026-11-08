@@ -230,6 +230,46 @@
       '</div>';
   }
 
+  function anexoEfetivo(atividade, i) {
+    return Object.prototype.hasOwnProperty.call(estado.anexos, i)
+      ? estado.anexos[i]
+      : (atividade.anexo || '');
+  }
+
+  function renderServicoSimulado(d, dadosBase) {
+    var semServico = d.atividades.every(function (a, i) {
+      var anexo = anexoEfetivo(a, i);
+      return anexo !== 'III' && anexo !== 'IV' && anexo !== 'V';
+    });
+    if (!semServico) return '';
+
+    var linhas = ['III', 'IV', 'V'].map(function (anexo) {
+      var r = TABELAS.calcular({
+        ano: d.ano,
+        anexo: anexo,
+        rbt12: dadosBase.rbt12,
+        rbt12p: dadosBase.rbt12p,
+        usouRBT12p: dadosBase.usouRBT12p,
+        primeiraFaixaForcada: dadosBase.primeiraFaixaForcada,
+        hibrido: estado.hibridoPDF
+      });
+      if (r.erro) return '';
+      var iss = r.aliquotasTributos.ISS != null ? pct(r.aliquotasTributos.ISS, 5) : '—';
+      return '<tr><td>Anexo ' + anexo + '</td><td>' + pct(r.nominal, 2) +
+        '</td><td>' + iss + '</td><td>' + pct(r.efetiva, 5) + '</td></tr>';
+    }).join('');
+
+    if (!linhas) return '';
+    return '<div class="servico-sim">' +
+      '<div class="servico-sim-head"><strong>Se emitir nota de serviço</strong><span>mesma base do extrato</span></div>' +
+      '<table class="servico-sim-tabela">' +
+      '<thead><tr><th>Anexo</th><th>Nominal</th><th>ISS efetivo</th><th>Efetiva</th></tr></thead>' +
+      '<tbody>' + linhas + '</tbody>' +
+      '</table>' +
+      '<p class="servico-sim-nota">III: serviços em geral. IV: construção civil, limpeza e vigilância — ISS e INSS/CPP pagos fora do DAS. V: profissão regulamentada com Fator R abaixo de 28%. O anexo depende do serviço emitido.</p>' +
+      '</div>';
+  }
+
   function renderPDF() {
     var d = estado.dados;
     if (!d) { renderVazio('Importe o extrato do PGDAS-D para começar.', 'O PDF é lido no seu navegador e não sai do computador.'); return; }
@@ -300,9 +340,7 @@
     }
 
     d.atividades.forEach(function (atividade, i) {
-      var anexo = Object.prototype.hasOwnProperty.call(estado.anexos, i)
-        ? estado.anexos[i]
-        : (atividade.anexo || '');
+      var anexo = anexoEfetivo(atividade, i);
 
       var resultado = null;
       if (anexo) {
@@ -403,11 +441,13 @@
       }
     });
 
+    html += renderServicoSimulado(d, dadosBase);
+
     if (estado.hibridoPDF && d.ano >= 2027) {
       html += '<div class="hibrido-info"><strong>Simples híbrido</strong>A parcela de IBS/CBS mostrada em cada atividade sai do DAS. No regime regular, IBS e CBS são apurados separadamente; o campo da NFS-e deve refletir a carga total.</div>';
     }
 
-    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie o cartão verde (nominal) para o Portal Contribuinte. O <strong>ISS efetivo</strong> é a fatia do ISS na partilha do anexo, calculada sobre a RBT12; no Anexo IV ele é pago fora do DAS. A <strong>efetiva</strong> é a carga total do período.</p>';
+    html += '<p class="rodape-nota"><strong>Como usar:</strong> copie o cartão verde (nominal) para o Portal Contribuinte. O <strong>ISS efetivo</strong> é a fatia do ISS na partilha do anexo, calculada sobre a RBT12; no Anexo IV, ele e o INSS/CPP são pagos fora do DAS. A <strong>efetiva</strong> é a carga do DAS no período; no Anexo IV ela não inclui ISS nem INSS/CPP.</p>';
 
     html += '<div class="acoes-resultado">';
     html +=   '<button class="btn btn-soft" data-acao="imprimir">Imprimir</button>';
@@ -512,7 +552,7 @@
     if (pdfjsCarregando) return pdfjsCarregando;
     pdfjsCarregando = new Promise(function (resolve, reject) {
       var script = document.createElement('script');
-      script.src = 'pdf.min.js?v=6';
+      script.src = 'pdf.min.js?v=7';
       script.onload = resolve;
       script.onerror = function () {
         pdfjsCarregando = null;
@@ -821,6 +861,23 @@
       }
     });
   }
+
+  var tituloOriginal = document.title;
+
+  function nomeDoRelatorio() {
+    var hoje = new Date();
+    var dia = ('0' + hoje.getDate()).slice(-2);
+    var mes = ('0' + (hoje.getMonth() + 1)).slice(-2);
+    var tipo = (estado.modo === 'pdf' && estado.completoPDF) ? 'completo' : 'compacto';
+    return 'Relatório ' + tipo + ' - ' + dia + '-' + mes + '-' + hoje.getFullYear();
+  }
+
+  window.addEventListener('beforeprint', function () {
+    document.title = nomeDoRelatorio();
+  });
+  window.addEventListener('afterprint', function () {
+    document.title = tituloOriginal;
+  });
 
   document.addEventListener('DOMContentLoaded', iniciar);
 })();

@@ -135,6 +135,17 @@ ok(perto(hib.efetiva, 10.2347, 0.001), 'efetiva cheia 2027 = ' + hib.efetiva.toF
 ok(perto(hib.fora, hib.efetiva * (16.41 + 0.19) / 100, 0.0001), 'parcela CBS+IBS fora do DAS = ' + hib.fora.toFixed(4) + '%');
 ok(perto(hib.dentro, hib.efetiva - hib.fora, 0.0001), 'parcela no DAS = ' + hib.dentro.toFixed(4) + '%');
 
+console.log('\n== Simulação de serviço sobre a base do extrato ==');
+const simulacao = { III: [13.5, 2.89031, 8.89326], IV: [10.2, 2.78259, 6.95648], V: [19.5, 3.21377, 16.91459] };
+Object.keys(simulacao).forEach(function (anexo) {
+  const r = TAB.calcular({ ano: 2026, anexo: anexo, rbt12: 382917.43 });
+  const esperado = simulacao[anexo];
+  ok(perto(r.nominal, esperado[0], 0.005) &&
+    perto(r.aliquotasTributos.ISS, esperado[1], 0.00001) &&
+    perto(r.efetiva, esperado[2], 0.00001),
+    'Anexo ' + anexo + ' na base R$ 382.917,43: ' + esperado.join('% / ') + '%');
+});
+
 console.log('\n== Início de atividade ==');
 const inicio2027Mes3 = TAB.baseDoExtrato({
   dataAbertura: '10/11/2026', ano: 2027, mes: 1, rbt12: 50000, rbt12p: 300000, rpa: 9000
