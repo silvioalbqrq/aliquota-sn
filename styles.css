@@ -320,18 +320,9 @@ button, input, select { font: inherit; color: inherit; }
 .toggle-hibrido input { width: 15px; height: 15px; accent-color: var(--blue); }
 
 /* Activities */
-.ativ-head, .ativ {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 118px 150px 150px;
-  gap: 12px; align-items: center;
-}
-.ativ-head {
-  font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--muted); padding: 7px 4px; border-bottom: 1px solid var(--line);
-}
-.ativ-head .col-portal { color: #067a54; font-weight: 800; }
-.ativ { padding: 9px 4px; border-bottom: 1px solid #edf2f8; align-items: start; }
+.ativ { padding: 10px 4px; border-bottom: 1px solid #edf2f8; }
 .ativ:last-child { border-bottom: 0; }
+.ativ-top { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 12px; align-items: center; }
 .ativ-desc { font-size: .78rem; font-weight: 600; line-height: 1.35; }
 .ativ-meta { font-size: .67rem; color: var(--muted); margin-top: 2px; }
 .ativ-anexo {
@@ -340,27 +331,29 @@ button, input, select { font: inherit; color: inherit; }
   font-size: .72rem; font-weight: 600; cursor: pointer;
 }
 .ativ-anexo:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
-.ativ-rate { text-align: right; }
-.ativ-rate strong { display: block; font-size: 1.28rem; font-weight: 800; color: var(--emerald); letter-spacing: -.03em; line-height: 1.1; }
-.ativ-rate span { display: block; font-size: .64rem; color: var(--muted); margin-top: 3px; line-height: 1.3; }
-.ativ-rate.is-empty strong { color: #b6c2d2; }
-.nominal-rate {
-  background: var(--emerald-soft);
-  border: 1px solid #a7e3c6;
-  border-radius: 9px;
-  padding: 5px 7px 7px;
-  text-align: center;
+.ativ-rates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.ativ-rate {
+  border: 1px solid var(--line); border-radius: 9px; background: #fcfdff;
+  padding: 5px 7px 7px; text-align: center;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
+.ativ-rate strong { display: block; font-size: 1.3rem; font-weight: 800; color: var(--emerald); letter-spacing: -.03em; line-height: 1.1; }
+.ativ-rate span { display: block; font-size: .64rem; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+.ativ-rate.is-empty strong { color: #b6c2d2; }
+.rate-cap {
+  display: block; font-size: .52rem; font-weight: 800;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 2px; line-height: 1.2;
+}
+.nominal-rate { background: var(--emerald-soft); border-color: #a7e3c6; }
 .nominal-rate strong { color: #047857; font-size: 1.45rem; }
+.nominal-rate .rate-cap { color: #067a54; }
 .nominal-rate.is-neutral { background: #f7fafd; border-color: var(--line); }
 .nominal-rate.is-neutral strong { color: var(--navy); font-size: 1.18rem; }
-.nominal-flag {
-  display: block !important; font-size: .52rem !important; font-weight: 800 !important;
-  letter-spacing: .06em; text-transform: uppercase; color: #067a54 !important;
-  margin: 0 0 2px !important; line-height: 1.2;
-}
+.iss-rate { background: #eff6ff; border-color: #bfdbfe; }
+.iss-rate strong { color: #1d4ed8; }
+.iss-rate .rate-cap { color: #1d4ed8; }
 .btn-portal {
   display: block; width: 100%; margin-top: 4px;
   background: #067a54; color: #fff; border: 0; border-radius: 6px;
@@ -575,13 +568,11 @@ button, input, select { font: inherit; color: inherit; }
   .panel { padding: 20px; }
   .badge-ano { display: none; }
   .chips { grid-template-columns: 1fr; }
-  .ativ-head { display: none; }
-  .ativ { display: flex; flex-wrap: wrap; gap: 10px; }
-  .ativ-main { flex: 1 1 100%; }
-  .ativ-anexo { flex: 1 1 130px; }
-  .ativ-rate { flex: 1 1 auto; text-align: right; }
-  .ativ-rate strong { font-size: 1.2rem; }
-  .nominal-rate strong { font-size: 1.45rem; }
+  .ativ-top { grid-template-columns: 1fr; gap: 6px; }
+  .ativ-anexo { max-width: 220px; }
+  .ativ-rates { gap: 6px; margin-top: 6px; }
+  .ativ-rate strong { font-size: .95rem; }
+  .nominal-rate strong { font-size: 1.1rem; }
   .meta-grid { grid-template-columns: 1fr 1fr; }
   .ratecard { flex-direction: column; }
   .rate-acoes { align-items: flex-start; }
@@ -619,17 +610,18 @@ button, input, select { font: inherit; color: inherit; }
   .chip strong { font-size: .8rem; }
 
   .section-mini { margin: 10px 0 2px; }
-  .ativ-head, .ativ { display: grid; grid-template-columns: minmax(0, 1fr) 100px 118px 118px; gap: 8px; padding: 5px 4px; }
-  .ativ-head { font-size: .58rem; letter-spacing: .04em; }
+  .ativ { padding: 5px 4px; }
+  .ativ-top { grid-template-columns: minmax(0, 1fr) 120px; gap: 8px; }
+  .ativ-rates { gap: 5px; margin-top: 4px; }
   .ativ-desc { font-size: .76rem; }
   .ativ-meta { font-size: .68rem; margin-top: 1px; }
   .ativ-nota { font-size: .62rem; padding: 4px 6px; margin-top: 3px; }
   .ativ-anexo { height: 26px; font-size: .68rem; }
+  .ativ-rate { padding: 3px 5px 4px; }
   .ativ-rate strong { font-size: .92rem; }
-  .ativ-rate span { font-size: .62rem; margin-top: 1px; }
-  .nominal-rate { padding: 3px 5px 4px; }
+  .ativ-rate span { font-size: .58rem; margin-top: 1px; line-height: 1.2; }
+  .rate-cap { font-size: .42rem; margin: 0 0 1px; }
   .nominal-rate strong { font-size: 1rem; }
-  .nominal-flag { font-size: .44rem !important; }
   .das-rate { font-size: .84rem; }
   .link-copy, .btn-portal { display: none; }
 
