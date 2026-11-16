@@ -319,6 +319,50 @@ button, input, select { font: inherit; color: inherit; }
 }
 .toggle-hibrido input { width: 15px; height: 15px; accent-color: var(--blue); }
 
+.toggle-completo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .74rem; color: var(--muted); cursor: pointer;
+  margin-top: 6px;
+}
+.toggle-completo input { width: 15px; height: 15px; accent-color: var(--blue); }
+
+.detalhes-completos {
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fbfdff; padding: 5px 8px 6px; margin: 6px 0;
+}
+.detalhes-completos h3 {
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .06em;
+  color: #1e3a8a; margin: 0 0 3px; padding-bottom: 3px;
+  border-bottom: 1px solid var(--line);
+}
+.detalhes-linha { font-size: .68rem; color: var(--ink); margin: 0; line-height: 1.55; }
+.detalhes-linha span + span::before { content: '·'; color: #b8c6d8; margin: 0 5px 0 2px; }
+.detalhes-linha b {
+  font-size: .56rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); margin-right: 2px;
+}
+
+.servico-sim {
+  border: 1px solid var(--line); border-radius: 8px;
+  background: #fbfdff; padding: 6px 9px 7px; margin: 8px 0;
+}
+.servico-sim-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.servico-sim-head strong {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .05em; color: #1e3a8a;
+}
+.servico-sim-head span { font-size: .6rem; color: var(--muted); }
+.servico-sim-tabela { width: 100%; border-collapse: collapse; font-size: .7rem; }
+.servico-sim-tabela th {
+  text-align: left; font-size: .54rem; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--muted); padding: 3px 4px; border-bottom: 1px solid var(--line);
+}
+.servico-sim-tabela td {
+  padding: 3px 4px; border-bottom: 1px solid #edf2f8; font-variant-numeric: tabular-nums;
+}
+.servico-sim-tabela tr:last-child td { border-bottom: 0; }
+.servico-sim-tabela td:first-child { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.servico-sim-nota { font-size: .6rem; color: var(--muted); margin: 4px 0 0; line-height: 1.4; }
+
 /* Activities */
 .ativ { padding: 10px 4px; border-bottom: 1px solid #edf2f8; }
 .ativ:last-child { border-bottom: 0; }
@@ -354,6 +398,9 @@ button, input, select { font: inherit; color: inherit; }
 .iss-rate { background: #eff6ff; border-color: #bfdbfe; }
 .iss-rate strong { color: #1d4ed8; }
 .iss-rate .rate-cap { color: #1d4ed8; }
+.iss-rate.is-neutral { background: #f7fafd; border-color: var(--line); }
+.iss-rate.is-neutral strong { color: #b6c2d2; font-size: 1.08rem; }
+.iss-rate.is-neutral .rate-cap { color: var(--muted); }
 .btn-portal {
   display: block; width: 100%; margin-top: 4px;
   background: #067a54; color: #fff; border: 0; border-radius: 6px;
@@ -383,6 +430,37 @@ button, input, select { font: inherit; color: inherit; }
 .tag-warn { background: #fef3f2; color: #b42318; border: 1px solid #fecdca; }
 .tag-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 .ativ-nota-sec { margin-top: 5px; font-size: .64rem; line-height: 1.4; color: var(--muted); }
+
+.tributos-card {
+  margin: 9px 0 2px;
+  padding: 8px 10px 9px;
+  border: 1px dashed #c7d7ea;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+.tributos-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.tributos-head strong { font-size: .66rem; text-transform: uppercase; letter-spacing: .06em; color: #1e3a8a; }
+.tributos-head span { font-size: .58rem; color: var(--muted); }
+.tributos-scroll { overflow-x: auto; }
+.tributos-card .partilha { margin-top: 1px; font-size: .72rem; }
+.tributos-card .partilha th { padding: 5px 5px 4px; font-size: .54rem; }
+.tributos-card .partilha td { padding: 4px 5px; }
+.tributos-card .partilha td:first-child { font-weight: 600; white-space: nowrap; }
+.tributos-card .total td { border-top: 1.5px solid var(--line); }
+.tributos-nota { font-size: .58rem; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+.tributos-card-compacto {
+  margin: 5px 0;
+  padding: 6px 8px 7px;
+  font-size: .66rem;
+}
+.tributos-card-compacto .tributos-head { gap: 6px; }
+.tributos-card-compacto .tributos-head strong { font-size: .6rem; }
+.tributos-card-compacto .tributos-head span { font-size: .52rem; }
+.tributos-card-compacto .partilha { margin-top: 2px; }
+.tributos-card-compacto .partilha th { padding: 3px 4px 2px; font-size: .5rem; }
+.tributos-card-compacto .partilha td { padding: 2.5px 4px; }
+.tributos-card-compacto .partilha td:first-child { font-weight: 600; white-space: nowrap; }
+.tributos-nota-compacto { font-size: .52rem; margin-top: 3px; line-height: 1.3; }
 
 .alerta {
   display: flex; gap: 10px; align-items: flex-start;
@@ -595,7 +673,7 @@ button, input, select { font: inherit; color: inherit; }
   @page { margin: 10mm; }
   body { background: #fff; font-size: 12px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .topbar, .hero, .entrada, .metodologia, .transicao, .legislacao, .footer,
-  .acoes-resultado, .btn-copy, .toggle-hibrido, .section-mini p { display: none !important; }
+  .acoes-resultado, .btn-copy, .toggle-hibrido, .toggle-completo, .section-mini p { display: none !important; }
   .wrap { width: 100%; }
   .layout { display: block; margin: 0; padding: 0; }
   .panel.resultado { box-shadow: none; border: 0; padding: 0; }
@@ -622,6 +700,13 @@ button, input, select { font: inherit; color: inherit; }
   .ativ-rate span { font-size: .58rem; margin-top: 1px; line-height: 1.2; }
   .rate-cap { font-size: .42rem; margin: 0 0 1px; }
   .nominal-rate strong { font-size: 1rem; }
+  /* O card compacto só existe no relatório completo, então ele pode sair na impressão. */
+  .tributos-card:not(.tributos-card-compacto) { display: none !important; }
+  .tributos-scroll { overflow: visible; }
+  .tributos-card { margin: 6px 0 1px; padding: 5px 7px 6px; font-size: .68rem; }
+  .detalhes-completos { margin: 4px 0; padding: 3px 6px 4px; }
+  .detalhes-completos h3 { font-size: .55rem; margin-bottom: 2px; padding-bottom: 2px; }
+  .servico-sim { margin: 5px 0 2px; padding: 4px 6px 5px; page-break-inside: avoid; }
   .das-rate { font-size: .84rem; }
   .link-copy, .btn-portal { display: none; }
 
